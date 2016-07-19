@@ -1,0 +1,10 @@
+name: SimpleWiki
+version: 0.0.1
+main: me.drewhoener.wiki.SimpleWiki
+commands:
+  testing:
+    description: testing
+    usage: /testing
+  swiki:
+    description: Base wiki command
+    usage: /swiki [pluginwiki] [category] [subcat]
