@@ -3,10 +3,9 @@ package me.drewhoener.wiki.pages;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
-import org.apache.commons.lang.WordUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -20,6 +19,7 @@ public class Entry {
 	private String name;
 	private String color;
 	private List<String> descriptionList = new LinkedList<>();
+	private List<ItemStack> recipeList = new LinkedList<>();
 	private ItemStack itemStack;
 
 	public Entry(SubCategory parent, String name, String color, List<String> descriptionList, ItemStack itemStack) {
@@ -33,14 +33,33 @@ public class Entry {
 	public Entry(SubCategory parent, ConfigurationSection configurationSection) {
 		this(parent, configurationSection.getName(), configurationSection.getString("color", "&9"),
 				configurationSection.getStringList("text"), new ItemStack(Material.matchMaterial(configurationSection.getString("itemType", "DIRT"))));
+		if (configurationSection.contains("recipe")) {
+			for (String s : configurationSection.getStringList("recipe")) {
+				Bukkit.getLogger().severe("ItemStack: " + s);
+				this.recipeList.add(new ItemStack(Material.matchMaterial(s)));
+			}
+
+		}
 	}
 
 	public String getName() {
 		return name;
 	}
 
+	public List<ItemStack> getRecipeList() {
+		return recipeList;
+	}
+
+	public SubCategory getParent() {
+		return parent;
+	}
+
+	public List<String> getDescriptionList() {
+		return descriptionList;
+	}
+
 	@SuppressWarnings("unchecked")
-	public BaseComponent[] formatText(){
+	public BaseComponent[] getHover(){
 
 		ArrayList components = new ArrayList();
 
@@ -54,9 +73,7 @@ public class Entry {
 
 		components.add(hoverMessage);
 
-		BaseComponent[] finalMessage = (BaseComponent[])components.toArray(new BaseComponent[components.size()]);
-
-		return new ComponentBuilder(WordUtils.capitalizeFully(name.replaceAll("_", " "))).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, finalMessage)).create();
+		return (BaseComponent[])components.toArray(new BaseComponent[components.size()]);
 	}
 
 	@Override
@@ -65,5 +82,4 @@ public class Entry {
 				"name='" + name + '\'' +
 				'}';
 	}
-
 }

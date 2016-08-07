@@ -51,7 +51,7 @@ public class Util {
 
 	public static String getHeader(String title) { //53 chars, 51 with brackets
 
-		String insert = ChatColor.GOLD + "[" + ChatColor.AQUA + title + ChatColor.GOLD + "]";
+		String insert = ChatColor.DARK_GREEN + "[" + ChatColor.DARK_AQUA + title + ChatColor.DARK_GREEN + "]";
 		int insertLength = ChatColor.stripColor(insert).length();
 
 		int s = (53 - insertLength);
@@ -72,7 +72,7 @@ public class Util {
 
 	public static String getEnd() {
 
-		return ChatColor.DARK_GREEN + "" + ChatColor.STRIKETHROUGH + "-----------------------------------------------------";
+		return ChatColor.DARK_AQUA + "" + ChatColor.STRIKETHROUGH + "-----------------------------------------------------";
 	}
 
 	public static String capitalizeFirst(String line) {

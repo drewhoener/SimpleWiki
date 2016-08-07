@@ -11,18 +11,19 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import org.apache.commons.lang3.text.WordUtils;
-import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 public class DataHolder {
 
 	private SimpleWiki simpleWiki;
 
 	private List<PluginWiki> wikiList = new ArrayList<>();
+	public List<UUID> noInteract = new ArrayList<>();
 
 	public DataHolder(SimpleWiki simpleWiki) {
 		this.simpleWiki = simpleWiki;
@@ -34,6 +35,10 @@ public class DataHolder {
 
 	public List<PluginWiki> getWikiList() {
 		return wikiList;
+	}
+
+	public void clearWikiList() {
+		this.wikiList.clear();
 	}
 
 	private void sortList(){
@@ -61,9 +66,16 @@ public class DataHolder {
 
 	public SubCategory getSubCategory(Category category, String arg) {
 		for(SubCategory subCategory : category.getSubCategoryList()) {
-			Bukkit.broadcastMessage(subCategory.getName());
 			if (subCategory.getName().equalsIgnoreCase(arg))
 				return subCategory;
+		}
+		return null;
+	}
+
+	public Entry getEntry(SubCategory subCategory, String arg) {
+		for(Entry entry : subCategory.getEntryList()) {
+			if (entry.getName().equalsIgnoreCase(arg))
+				return entry;
 		}
 		return null;
 	}
@@ -72,31 +84,36 @@ public class DataHolder {
 
 		this.sortList();
 		List<BaseComponent[]> components = new ArrayList<>();
-		int componentCounter = 0;
-		int totalCounter = 1;
 		ComponentBuilder builder = new ComponentBuilder("");
 		String spacer = "   ";
+		StringBuilder counter = new StringBuilder();
+		int tally = 1;
 		for(PluginWiki wiki : this.wikiList){
 			String normalizedName = WordUtils.capitalizeFully(wiki.getName().replaceAll("_", " "));
-			ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " wiki");
-			builder.append("[").color(ChatColor.DARK_AQUA).append(normalizedName).color(ChatColor.GRAY)
-					.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()))
-					.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + wiki.getName().toLowerCase()))
-					.append("]").color(ChatColor.DARK_AQUA);
-
-			if(componentCounter >= 2 || totalCounter == this.wikiList.size()){
-
+			if(counter.append("[").append(normalizedName).append("]").length() <= 60) {
+				ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " wiki");
+				builder.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
+						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()))
+						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + wiki.getName().toLowerCase()))
+						.append("]").color(ChatColor.DARK_GREEN);
+				builder.append(spacer);
+				counter.append(spacer);
+			}else{
 				components.add(builder.create());
 				builder = new ComponentBuilder("");
-
-				componentCounter = -1;
-			}else{
-
+				ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " wiki");
+				builder.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
+						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()))
+						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + wiki.getName().toLowerCase()))
+						.append("]").color(ChatColor.DARK_GREEN);
 				builder.append(spacer);
+				counter = new StringBuilder("").append("[").append(normalizedName).append("]").append(spacer);
 			}
 
-			componentCounter++;
-			totalCounter++;
+			if(tally == this.wikiList.size()){
+				components.add(builder.create());
+			}
+			tally++;
 		}
 
 		return components.toArray(new BaseComponent[components.size()][]);
@@ -106,31 +123,36 @@ public class DataHolder {
 
 		wiki.sortCategories();
 		List<BaseComponent[]> components = new ArrayList<>();
-		int componentCounter = 0;
-		int totalCounter = 1;
 		ComponentBuilder builder = new ComponentBuilder("");
+		StringBuilder counter = new StringBuilder();
 		String spacer = "   ";
+		int tally = 1;
 		for(Category category : wiki.getCategoryList()){
 			String normalizedName = WordUtils.capitalizeFully(category.getName().replaceAll("_", " "));
-			ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " category");
-			builder.append("[").color(ChatColor.DARK_AQUA).append(normalizedName).color(ChatColor.GRAY)
-					.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()))
-					.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + category.getParent().getName().toLowerCase() + " " + category.getName().toLowerCase()))
-					.append("]").color(ChatColor.DARK_AQUA);
-
-			if(componentCounter >= 2 || totalCounter == wiki.getCategoryList().size()){
-
+			if(counter.append("[").append(normalizedName).append("]").length() <= 60) {
+				ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " category");
+				builder.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
+						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()))
+						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + category.getParent().getName().toLowerCase() + " " + category.getName().toLowerCase()))
+						.append("]").color(ChatColor.DARK_GREEN);
+				builder.append(spacer);
+				counter.append(spacer);
+			}else{
 				components.add(builder.create());
 				builder = new ComponentBuilder("");
-
-				componentCounter = -1;
-			}else{
-
+				ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " category");
+				builder.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
+						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()))
+						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + category.getParent().getName().toLowerCase() + " " + category.getName().toLowerCase()))
+						.append("]").color(ChatColor.DARK_GREEN);
 				builder.append(spacer);
+				counter = new StringBuilder("").append("[").append(normalizedName).append("]").append(spacer);
 			}
 
-			componentCounter++;
-			totalCounter++;
+			if(tally == wiki.getCategoryList().size()){
+				components.add(builder.create());
+			}
+			tally++;
 		}
 
 		return components.toArray(new BaseComponent[components.size()][]);
@@ -140,43 +162,75 @@ public class DataHolder {
 	public BaseComponent[][] formatSubCategoryEntries(Category category) {
 		category.sortSubCategories();
 		List<BaseComponent[]> components = new ArrayList<>();
-		int componentCounter = 0;
-		int totalCounter = 1;
 		ComponentBuilder builder = new ComponentBuilder("");
+		StringBuilder counter = new StringBuilder();
 		String spacer = "   ";
+		int tally = 1;
 		for(SubCategory subCategory : category.getSubCategoryList()){
 			String normalizedName = WordUtils.capitalizeFully(subCategory.getName().replaceAll("_", " "));
-			ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " sub-category");
-			builder.append("[").color(ChatColor.DARK_AQUA).append(normalizedName).color(ChatColor.GRAY)
-					.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()))
-					.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + category.getParent().getName().toLowerCase() + " " + category.getName().toLowerCase() + " " + subCategory.getName().toLowerCase()))
-					.append("]").color(ChatColor.DARK_AQUA);
-
-			if(componentCounter >= 2 || totalCounter == category.getSubCategoryList().size()){
-
+			if(counter.append("[").append(normalizedName).append("]").length() <= 60) {
+				ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " sub-category");
+				builder.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
+						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()))
+						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + category.getParent().getName().toLowerCase() + " " + category.getName().toLowerCase() + " " + subCategory.getName().toLowerCase()))
+						.append("]").color(ChatColor.DARK_GREEN);
+				builder.append(spacer);
+				counter.append(spacer);
+			}else{
 				components.add(builder.create());
 				builder = new ComponentBuilder("");
-
-				componentCounter = -1;
-			}else{
-
+				ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " sub-category");
+				builder.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
+						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()))
+						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + category.getParent().getName().toLowerCase() + " " + category.getName().toLowerCase() + " " + subCategory.getName().toLowerCase()))
+						.append("]").color(ChatColor.DARK_GREEN);
 				builder.append(spacer);
+				counter = new StringBuilder("").append("[").append(normalizedName).append("]").append(spacer);
 			}
-
-			componentCounter++;
-			totalCounter++;
+			if(tally == category.getSubCategoryList().size()){
+				components.add(builder.create());
+			}
+			tally++;
 		}
 
 		return components.toArray(new BaseComponent[components.size()][]);
 	}
 
-	public BaseComponent[][] formatEntries(SubCategory subCategory) {
+	public BaseComponent[][] formatEntries(SubCategory subCategory){
 		subCategory.sortEntries();
 		List<BaseComponent[]> components = new ArrayList<>();
+		ComponentBuilder builder = new ComponentBuilder("");
+		StringBuilder counter = new StringBuilder();
+		String spacer = "   ";
+		int tally = 1;
 		for(Entry entry : subCategory.getEntryList()){
-			components.add(entry.formatText());
+			String normalizedName = WordUtils.capitalizeFully(entry.getName().replaceAll("_", " "));
+			if(counter.append("[").append(normalizedName).append("]").length() <= 60) {
+				builder.append("[").color(ChatColor.DARK_GREEN)
+						.append(org.apache.commons.lang.WordUtils.capitalizeFully(entry.getName().replaceAll("_", " "))).color(ChatColor.GRAY)
+						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, entry.getHover()))
+						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + entry.getParent().getParent().getParent().getName().toLowerCase() + " " + entry.getParent().getParent().getName() + " " + entry.getParent().getName() + " " + entry.getName()))
+						.append("]").color(ChatColor.DARK_GREEN);
+				builder.append(spacer);
+				counter.append(spacer);
+			}else{
+				components.add(builder.create());
+				builder = new ComponentBuilder("");
+				builder.append("[").color(ChatColor.DARK_GREEN)
+						.append(org.apache.commons.lang.WordUtils.capitalizeFully(entry.getName().replaceAll("_", " "))).color(ChatColor.GRAY)
+						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, entry.getHover()))
+						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + entry.getParent().getParent().getParent().getName().toLowerCase() + " " + entry.getParent().getParent().getName() + " " + entry.getParent().getName() + " " + entry.getName()))
+						.append("]").color(ChatColor.DARK_GREEN);
+				builder.append(spacer);
+				counter = new StringBuilder("").append("[").append(normalizedName).append("]").append(spacer);
+			}
+			if(tally == subCategory.getEntryList().size()){
+				components.add(builder.create());
+			}
+			tally++;
 		}
 
 		return components.toArray(new BaseComponent[components.size()][]);
 	}
+
 }

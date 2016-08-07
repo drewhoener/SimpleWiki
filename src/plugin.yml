@@ -5,6 +5,10 @@ commands:
   testing:
     description: testing
     usage: /testing
-  swiki:
+  wiki:
     description: Base wiki command
-    usage: /swiki [pluginwiki] [category] [subcat]
+    usage: /wiki [pluginwiki] [category] [subcat]
+    aliases: [swiki]
+  reindex:
+    description: Reloads wiki
+    usage: /reindex

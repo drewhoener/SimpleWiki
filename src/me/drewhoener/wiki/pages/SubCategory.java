@@ -38,6 +38,10 @@ public class SubCategory {
 		return entryList;
 	}
 
+	public Category getParent() {
+		return parent;
+	}
+
 	@Override
 	public String toString() {
 		return "SubCategory{" +
@@ -45,5 +49,4 @@ public class SubCategory {
 				", pageList=" + entryList +
 				'}';
 	}
-
 }

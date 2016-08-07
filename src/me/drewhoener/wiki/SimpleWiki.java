@@ -3,17 +3,23 @@ package me.drewhoener.wiki;
 import me.drewhoener.wiki.data.DataHolder;
 import me.drewhoener.wiki.pages.PluginWiki;
 import me.drewhoener.wiki.util.Util;
+import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.io.FilenameUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.regex.Pattern;
 
-public class SimpleWiki extends JavaPlugin {
+public class SimpleWiki extends JavaPlugin implements Listener{
 
 	public DataHolder dataHolder;
 	public static final File dataFolder = new File("plugins", "SimpleWiki");
@@ -37,6 +43,37 @@ public class SimpleWiki extends JavaPlugin {
 
 		this.dataHolder = new DataHolder(this);
 
+		this.indexFiles();
+
+		this.getCommand("wiki").setExecutor(new CommandWiki(this));
+		this.getServer().getPluginManager().registerEvents(this, this);
+
+	}
+
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
+		switch(command.getName()){
+
+			case "testing":
+
+				if(sender.isOp() && sender instanceof Player)
+					if(!this.dataHolder.getWikiList().isEmpty())
+						for(PluginWiki category : this.dataHolder.getWikiList())
+							Bukkit.broadcastMessage(category.toString());
+				break;
+			case "reindex":
+				sender.sendMessage(ChatColor.GREEN + "Reloading wiki files");
+				this.dataHolder.clearWikiList();
+				this.indexFiles();
+				break;
+
+		}
+
+		return true;
+	}
+
+	public void indexFiles(){
 		if(Util.WIKI_DIR.exists()){
 			File[] files = Util.WIKI_DIR.listFiles();
 			if(files != null)
@@ -54,26 +91,16 @@ public class SimpleWiki extends JavaPlugin {
 		}else{
 			this.getLogger().severe("No Category File Detected!");
 		}
-
-		this.getCommand("swiki").setExecutor(new CommandWiki(this));
-
 	}
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	@EventHandler
+	public void onInteract(InventoryClickEvent event){
+		if(this.dataHolder.noInteract.contains(event.getWhoClicked().getUniqueId()))
+			event.setCancelled(true);
+	}
 
-		switch(command.getName()){
-
-			case "testing":
-
-				if(sender.isOp())
-					if(!this.dataHolder.getWikiList().isEmpty())
-						for(PluginWiki category : this.dataHolder.getWikiList())
-							Bukkit.broadcastMessage(category.toString());
-				break;
-
-		}
-
-		return true;
+	@EventHandler
+	public void onCloseInventory(InventoryCloseEvent event){
+		this.dataHolder.noInteract.remove(event.getPlayer().getUniqueId());
 	}
 }
