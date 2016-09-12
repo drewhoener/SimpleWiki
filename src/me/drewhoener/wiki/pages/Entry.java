@@ -18,20 +18,22 @@ public class Entry {
 	private SubCategory parent;
 	private String name;
 	private String color;
+	private String permissionNode;
 	private List<String> descriptionList = new LinkedList<>();
 	private List<ItemStack> recipeList = new LinkedList<>();
 	private ItemStack itemStack;
 
-	public Entry(SubCategory parent, String name, String color, List<String> descriptionList, ItemStack itemStack) {
+	public Entry(SubCategory parent, String name, String permissionNode, String color, List<String> descriptionList, ItemStack itemStack) {
 		this.parent = parent;
 		this.name = name;
+		this.permissionNode = permissionNode;
 		this.color = color;
 		this.descriptionList = descriptionList;
 		this.itemStack = itemStack;
 	}
 
 	public Entry(SubCategory parent, ConfigurationSection configurationSection) {
-		this(parent, configurationSection.getName(), configurationSection.getString("color", "&9"),
+		this(parent, configurationSection.getName(), configurationSection.getString("permissionNode", null), configurationSection.getString("color", "&9"),
 				configurationSection.getStringList("text"), new ItemStack(Material.matchMaterial(configurationSection.getString("itemType", "DIRT"))));
 		if (configurationSection.contains("recipe")) {
 			for (String s : configurationSection.getStringList("recipe")) {
@@ -56,6 +58,10 @@ public class Entry {
 
 	public List<String> getDescriptionList() {
 		return descriptionList;
+	}
+
+	public String getPermissionNode() {
+		return permissionNode;
 	}
 
 	@SuppressWarnings("unchecked")

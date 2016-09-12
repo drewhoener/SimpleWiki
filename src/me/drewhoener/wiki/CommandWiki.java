@@ -53,7 +53,7 @@ public class CommandWiki implements CommandExecutor {
 				player.sendMessage(Util.getHeader("Wikis"));
 				player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "" + "Click the entries to navigate!");
 
-				for(BaseComponent[] components : this.simpleWiki.dataHolder.formatWikiEntries())
+				for(BaseComponent[] components : this.simpleWiki.dataHolder.formatWikiEntries(player))
 					player.spigot().sendMessage(components);
 				player.sendMessage(Util.getEnd());
 				break;
@@ -65,7 +65,9 @@ public class CommandWiki implements CommandExecutor {
 				}
 
 				player.sendMessage(Util.getHeader(WordUtils.capitalizeFully(wiki.getName().replaceAll("_", " "))));
-				for(BaseComponent[] components : this.simpleWiki.dataHolder.formatCategoryEntries(wiki))
+				if(wiki.getSubHeader() != null)
+					player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "" + wiki.getSubHeader());
+				for(BaseComponent[] components : this.simpleWiki.dataHolder.formatCategoryEntries(wiki, player))
 					player.spigot().sendMessage(components);
 				player.sendMessage(Util.getEnd());
 				break;
@@ -82,7 +84,9 @@ public class CommandWiki implements CommandExecutor {
 				}
 
 				player.sendMessage(Util.getHeader(WordUtils.capitalizeFully(category.getName().replaceAll("_", " "))));
-				for(BaseComponent[] components : this.simpleWiki.dataHolder.formatSubCategoryEntries(category))
+				if(category.getSubHeader() != null)
+					player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "" + category.getSubHeader());
+				for(BaseComponent[] components : this.simpleWiki.dataHolder.formatSubCategoryEntries(category, player))
 					player.spigot().sendMessage(components);
 				player.sendMessage(Util.getEnd());
 				break;
@@ -103,7 +107,9 @@ public class CommandWiki implements CommandExecutor {
 					return;
 				}
 				player.sendMessage(Util.getHeader(WordUtils.capitalizeFully(subCategory.getName().replaceAll("_", " "))));
-				for(BaseComponent[] components : this.simpleWiki.dataHolder.formatEntries(subCategory))
+				if(subCategory.getSubHeader() != null)
+					player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "" + subCategory.getSubHeader());
+				for(BaseComponent[] components : this.simpleWiki.dataHolder.formatEntries(subCategory, player))
 					player.spigot().sendMessage(components);
 				player.sendMessage(Util.getEnd());
 				break;

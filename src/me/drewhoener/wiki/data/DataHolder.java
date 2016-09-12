@@ -11,6 +11,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import org.apache.commons.lang3.text.WordUtils;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,7 +81,7 @@ public class DataHolder {
 		return null;
 	}
 
-	public BaseComponent[][] formatWikiEntries() {
+	public BaseComponent[][] formatWikiEntries(Player player) {
 
 		this.sortList();
 		List<BaseComponent[]> components = new ArrayList<>();
@@ -89,12 +90,15 @@ public class DataHolder {
 		StringBuilder counter = new StringBuilder();
 		int tally = 1;
 		for(PluginWiki wiki : this.wikiList){
+			if(wiki.getPermissionNode() != null && !player.hasPermission(wiki.getPermissionNode()))
+				continue;
 			String normalizedName = WordUtils.capitalizeFully(wiki.getName().replaceAll("_", " "));
 			if(counter.append("[").append(normalizedName).append("]").length() <= 60) {
 				ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " wiki");
-				builder.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
+				builder.append("")
 						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()))
 						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + wiki.getName().toLowerCase()))
+						.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
 						.append("]").color(ChatColor.DARK_GREEN);
 				builder.append(spacer);
 				counter.append(spacer);
@@ -102,9 +106,10 @@ public class DataHolder {
 				components.add(builder.create());
 				builder = new ComponentBuilder("");
 				ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " wiki");
-				builder.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
+				builder.append("")
 						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()))
 						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + wiki.getName().toLowerCase()))
+						.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
 						.append("]").color(ChatColor.DARK_GREEN);
 				builder.append(spacer);
 				counter = new StringBuilder("").append("[").append(normalizedName).append("]").append(spacer);
@@ -119,7 +124,7 @@ public class DataHolder {
 		return components.toArray(new BaseComponent[components.size()][]);
 	}
 
-	public BaseComponent[][] formatCategoryEntries(PluginWiki wiki) {
+	public BaseComponent[][] formatCategoryEntries(PluginWiki wiki, Player player) {
 
 		wiki.sortCategories();
 		List<BaseComponent[]> components = new ArrayList<>();
@@ -128,12 +133,15 @@ public class DataHolder {
 		String spacer = "   ";
 		int tally = 1;
 		for(Category category : wiki.getCategoryList()){
+			if(category.getPermissionNode() != null && !player.hasPermission(category.getPermissionNode()))
+				continue;
 			String normalizedName = WordUtils.capitalizeFully(category.getName().replaceAll("_", " "));
 			if(counter.append("[").append(normalizedName).append("]").length() <= 60) {
 				ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " category");
-				builder.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
+				builder.append("")
 						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()))
 						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + category.getParent().getName().toLowerCase() + " " + category.getName().toLowerCase()))
+						.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
 						.append("]").color(ChatColor.DARK_GREEN);
 				builder.append(spacer);
 				counter.append(spacer);
@@ -141,9 +149,10 @@ public class DataHolder {
 				components.add(builder.create());
 				builder = new ComponentBuilder("");
 				ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " category");
-				builder.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
+				builder.append("")
 						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()))
 						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + category.getParent().getName().toLowerCase() + " " + category.getName().toLowerCase()))
+						.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
 						.append("]").color(ChatColor.DARK_GREEN);
 				builder.append(spacer);
 				counter = new StringBuilder("").append("[").append(normalizedName).append("]").append(spacer);
@@ -159,7 +168,7 @@ public class DataHolder {
 
 	}
 
-	public BaseComponent[][] formatSubCategoryEntries(Category category) {
+	public BaseComponent[][] formatSubCategoryEntries(Category category, Player player) {
 		category.sortSubCategories();
 		List<BaseComponent[]> components = new ArrayList<>();
 		ComponentBuilder builder = new ComponentBuilder("");
@@ -167,12 +176,15 @@ public class DataHolder {
 		String spacer = "   ";
 		int tally = 1;
 		for(SubCategory subCategory : category.getSubCategoryList()){
+			if(subCategory.getPermissionNode() != null && !player.hasPermission(subCategory.getPermissionNode()))
+				continue;
 			String normalizedName = WordUtils.capitalizeFully(subCategory.getName().replaceAll("_", " "));
 			if(counter.append("[").append(normalizedName).append("]").length() <= 60) {
 				ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " sub-category");
-				builder.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
+				builder.append("")
 						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()))
 						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + category.getParent().getName().toLowerCase() + " " + category.getName().toLowerCase() + " " + subCategory.getName().toLowerCase()))
+						.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
 						.append("]").color(ChatColor.DARK_GREEN);
 				builder.append(spacer);
 				counter.append(spacer);
@@ -180,9 +192,10 @@ public class DataHolder {
 				components.add(builder.create());
 				builder = new ComponentBuilder("");
 				ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " sub-category");
-				builder.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
+				builder.append("")
 						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()))
 						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + category.getParent().getName().toLowerCase() + " " + category.getName().toLowerCase() + " " + subCategory.getName().toLowerCase()))
+						.append("[").color(ChatColor.DARK_GREEN).append(normalizedName).color(ChatColor.GRAY)
 						.append("]").color(ChatColor.DARK_GREEN);
 				builder.append(spacer);
 				counter = new StringBuilder("").append("[").append(normalizedName).append("]").append(spacer);
@@ -196,7 +209,7 @@ public class DataHolder {
 		return components.toArray(new BaseComponent[components.size()][]);
 	}
 
-	public BaseComponent[][] formatEntries(SubCategory subCategory){
+	public BaseComponent[][] formatEntries(SubCategory subCategory, Player player){
 		subCategory.sortEntries();
 		List<BaseComponent[]> components = new ArrayList<>();
 		ComponentBuilder builder = new ComponentBuilder("");
@@ -204,22 +217,26 @@ public class DataHolder {
 		String spacer = "   ";
 		int tally = 1;
 		for(Entry entry : subCategory.getEntryList()){
+			if(entry.getPermissionNode() != null && !player.hasPermission(entry.getPermissionNode()))
+				continue;
 			String normalizedName = WordUtils.capitalizeFully(entry.getName().replaceAll("_", " "));
 			if(counter.append("[").append(normalizedName).append("]").length() <= 60) {
-				builder.append("[").color(ChatColor.DARK_GREEN)
-						.append(org.apache.commons.lang.WordUtils.capitalizeFully(entry.getName().replaceAll("_", " "))).color(ChatColor.GRAY)
+				builder.append("")
 						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, entry.getHover()))
 						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + entry.getParent().getParent().getParent().getName().toLowerCase() + " " + entry.getParent().getParent().getName() + " " + entry.getParent().getName() + " " + entry.getName()))
+						.append("[").color(ChatColor.DARK_GREEN)
+						.append(org.apache.commons.lang.WordUtils.capitalizeFully(entry.getName().replaceAll("_", " "))).color(ChatColor.GRAY)
 						.append("]").color(ChatColor.DARK_GREEN);
 				builder.append(spacer);
 				counter.append(spacer);
 			}else{
 				components.add(builder.create());
 				builder = new ComponentBuilder("");
-				builder.append("[").color(ChatColor.DARK_GREEN)
-						.append(org.apache.commons.lang.WordUtils.capitalizeFully(entry.getName().replaceAll("_", " "))).color(ChatColor.GRAY)
+				builder.append("")
 						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, entry.getHover()))
 						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + entry.getParent().getParent().getParent().getName().toLowerCase() + " " + entry.getParent().getParent().getName() + " " + entry.getParent().getName() + " " + entry.getName()))
+						.append("[").color(ChatColor.DARK_GREEN)
+						.append(org.apache.commons.lang.WordUtils.capitalizeFully(entry.getName().replaceAll("_", " "))).color(ChatColor.GRAY)
 						.append("]").color(ChatColor.DARK_GREEN);
 				builder.append(spacer);
 				counter = new StringBuilder("").append("[").append(normalizedName).append("]").append(spacer);

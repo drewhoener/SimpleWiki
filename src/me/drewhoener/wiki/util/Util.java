@@ -6,11 +6,13 @@ import org.bukkit.ChatColor;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Util {
 
 	public static final File WIKI_DIR;
+	public static final List<String> reservedWords = Arrays.asList("permissionNode", "subHeader");
 
 	static {
 
