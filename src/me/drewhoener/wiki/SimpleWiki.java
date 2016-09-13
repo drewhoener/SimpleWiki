@@ -19,12 +19,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.regex.Pattern;
 
-public class SimpleWiki extends JavaPlugin implements Listener{
+public class SimpleWiki extends JavaPlugin implements Listener {
 
 	DataHolder dataHolder;
 	public static final File dataFolder = new File("plugins", "SimpleWiki");
 
-	public void onEnable(){
+	public void onEnable() {
 
 		if (!this.getDataFolder().exists()) {
 
@@ -42,7 +42,6 @@ public class SimpleWiki extends JavaPlugin implements Listener{
 		}
 
 		this.dataHolder = new DataHolder();
-
 		this.indexFiles();
 
 		this.getCommand("wiki").setExecutor(new CommandWiki(this));
@@ -53,13 +52,13 @@ public class SimpleWiki extends JavaPlugin implements Listener{
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-		switch(command.getName()){
+		switch (command.getName()) {
 
 			case "testing":
 
-				if(sender.isOp() && sender instanceof Player)
-					if(!this.dataHolder.getWikiList().isEmpty())
-						for(PluginWiki category : this.dataHolder.getWikiList())
+				if (sender.isOp() && sender instanceof Player)
+					if (!this.dataHolder.getWikiList().isEmpty())
+						for (PluginWiki category : this.dataHolder.getWikiList())
 							Bukkit.broadcastMessage(category.toString());
 				break;
 			case "reindex":
@@ -74,10 +73,10 @@ public class SimpleWiki extends JavaPlugin implements Listener{
 	}
 
 	private void indexFiles() {
-		if(Util.WIKI_DIR.exists()){
+		if (Util.WIKI_DIR.exists()) {
 			File[] files = Util.WIKI_DIR.listFiles();
-			if(files != null)
-				for(File file : files)
+			if (files != null)
+				for (File file : files)
 					try {
 						this.getLogger().info("Debug: File name is " + file.getName());
 						if (FilenameUtils.getExtension(file.getName()).endsWith("yml")) {
@@ -85,22 +84,22 @@ public class SimpleWiki extends JavaPlugin implements Listener{
 							wiki.load(file);
 							this.dataHolder.addWiki(new PluginWiki(file.getName().replaceAll(Pattern.quote(".yml"), ""), wiki));
 						}
-					}catch(Exception e){
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
-		}else{
+		} else {
 			this.getLogger().severe("No Category File Detected!");
 		}
 	}
 
 	@EventHandler
-	public void onInteract(InventoryClickEvent event){
-		if(this.dataHolder.noInteract.contains(event.getWhoClicked().getUniqueId()))
+	public void onInteract(InventoryClickEvent event) {
+		if (this.dataHolder.noInteract.contains(event.getWhoClicked().getUniqueId()))
 			event.setCancelled(true);
 	}
 
 	@EventHandler
-	public void onCloseInventory(InventoryCloseEvent event){
+	public void onCloseInventory(InventoryCloseEvent event) {
 		this.dataHolder.noInteract.remove(event.getPlayer().getUniqueId());
 	}
 }

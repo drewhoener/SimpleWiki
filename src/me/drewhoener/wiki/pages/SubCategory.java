@@ -21,8 +21,8 @@ public class SubCategory {
 		this.parent = parent;
 		this.permissionNode = section.getString("permissionNode", null);
 		this.subHeader = section.getString("subHeader", null);
-		for(String entryString : section.getKeys(false)){
-			if(!Util.reservedWords.contains(entryString))
+		for (String entryString : section.getKeys(false)) {
+			if (!Util.reservedWords.contains(entryString))
 				this.entryList.add(new Entry(this, section.getConfigurationSection(entryString)));
 		}
 	}

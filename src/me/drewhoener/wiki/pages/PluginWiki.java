@@ -19,8 +19,8 @@ public class PluginWiki {
 		this.name = name;
 		this.permissionNode = wiki.getString("permissionNode", null);
 		this.subHeader = wiki.getString("subHeader", null);
-		for(String categoryString : wiki.getKeys(false))
-			if(!Util.reservedWords.contains(categoryString))
+		for (String categoryString : wiki.getKeys(false))
+			if (!Util.reservedWords.contains(categoryString))
 				this.categoryList.add(new Category(this, wiki.getConfigurationSection(categoryString)));
 	}
 
@@ -32,7 +32,7 @@ public class PluginWiki {
 		return categoryList;
 	}
 
-	public void sortCategories(){
+	public void sortCategories() {
 		Collections.sort(this.categoryList, new Comparator<Category>() {
 			@Override
 			public int compare(Category o1, Category o2) {

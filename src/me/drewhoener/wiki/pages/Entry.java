@@ -65,21 +65,21 @@ public class Entry {
 	}
 
 	@SuppressWarnings("unchecked")
-	public BaseComponent[] getHover(){
+	public BaseComponent[] getHover() {
 
 		ArrayList components = new ArrayList();
 
 		TextComponent hoverMessage = new TextComponent(new ComponentBuilder("Description").color(ChatColor.DARK_AQUA).create());
 		TextComponent newLineComp = new TextComponent(ComponentSerializer.parse("{text:\"\n\"}"));
 
-		for(String line : this.descriptionList) {
+		for (String line : this.descriptionList) {
 			hoverMessage.addExtra(newLineComp);
 			hoverMessage.addExtra(new TextComponent(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', line))));
 		}
 
 		components.add(hoverMessage);
 
-		return (BaseComponent[])components.toArray(new BaseComponent[components.size()]);
+		return (BaseComponent[]) components.toArray(new BaseComponent[components.size()]);
 	}
 
 	@Override

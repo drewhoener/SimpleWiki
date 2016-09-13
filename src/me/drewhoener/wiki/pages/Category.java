@@ -16,20 +16,20 @@ public class Category {
 	private String subHeader;
 	private List<SubCategory> subCategoryList = new LinkedList<>();
 
-	public Category(PluginWiki parent, ConfigurationSection section){
+	public Category(PluginWiki parent, ConfigurationSection section) {
 		this.name = section.getName();
 		this.parent = parent;
 		this.permissionNode = section.getString("permissionNode", null);
 		this.subHeader = section.getString("subHeader", null);
-		for(String categoryString : section.getKeys(false))
-			if(!Util.reservedWords.contains(categoryString))
+		for (String categoryString : section.getKeys(false))
+			if (!Util.reservedWords.contains(categoryString))
 				this.subCategoryList.add(new SubCategory(this, section.getConfigurationSection(categoryString)));
 	}
 
-	public Category(PluginWiki parent, String name, ConfigurationSection section){
+	public Category(PluginWiki parent, String name, ConfigurationSection section) {
 		this.name = name;
 		this.parent = parent;
-		for(String categoryString : section.getKeys(false))
+		for (String categoryString : section.getKeys(false))
 			this.subCategoryList.add(new SubCategory(this, section.getConfigurationSection(categoryString)));
 	}
 

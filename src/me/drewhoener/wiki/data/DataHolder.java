@@ -28,7 +28,7 @@ public class DataHolder {
 	private List<PluginWiki> wikiList = new ArrayList<>();
 	public List<UUID> noInteract = new ArrayList<>();
 
-	public void addWiki(PluginWiki wiki){
+	public void addWiki(PluginWiki wiki) {
 		this.wikiList.add(wiki);
 	}
 
@@ -40,7 +40,7 @@ public class DataHolder {
 		this.wikiList.clear();
 	}
 
-	private void sortList(){
+	private void sortList() {
 		Collections.sort(this.wikiList, new Comparator<PluginWiki>() {
 			@Override
 			public int compare(PluginWiki o1, PluginWiki o2) {
@@ -50,21 +50,21 @@ public class DataHolder {
 	}
 
 	public PluginWiki getWikiByName(String arg) {
-		for(PluginWiki wiki : this.wikiList)
-			if(arg.equalsIgnoreCase(wiki.getName()))
+		for (PluginWiki wiki : this.wikiList)
+			if (arg.equalsIgnoreCase(wiki.getName()))
 				return wiki;
 		return null;
 	}
 
 	public Category getCategory(PluginWiki wiki, String arg) {
-		for(Category category : wiki.getCategoryList())
-			if(category.getName().equalsIgnoreCase(arg))
+		for (Category category : wiki.getCategoryList())
+			if (category.getName().equalsIgnoreCase(arg))
 				return category;
 		return null;
 	}
 
 	public SubCategory getSubCategory(Category category, String arg) {
-		for(SubCategory subCategory : category.getSubCategoryList()) {
+		for (SubCategory subCategory : category.getSubCategoryList()) {
 			if (subCategory.getName().equalsIgnoreCase(arg))
 				return subCategory;
 		}
@@ -72,7 +72,7 @@ public class DataHolder {
 	}
 
 	public Entry getEntry(SubCategory subCategory, String arg) {
-		for(Entry entry : subCategory.getEntryList()) {
+		for (Entry entry : subCategory.getEntryList()) {
 			if (entry.getName().equalsIgnoreCase(arg))
 				return entry;
 		}
@@ -132,7 +132,7 @@ public class DataHolder {
 		String spacer = "   ";
 		StringBuilder counter = new StringBuilder();
 
-		for(PluginWiki wiki : this.wikiList){
+		for (PluginWiki wiki : this.wikiList) {
 			if (wiki.getPermissionNode() != null && !player.hasPermission(wiki.getPermissionNode()))
 				continue;
 			String normalizedName = WordUtils.capitalizeFully(wiki.getName().replaceAll("_", " "));
@@ -143,11 +143,11 @@ public class DataHolder {
 		}
 		for (Map.Entry<PluginWiki, TextComponent> entry : workingList.entrySet()) {
 			String normalizedName = WordUtils.capitalizeFully(entry.getKey().getName().replaceAll("_", " "));
-			if(counter.append("[").append(normalizedName).append("]").length() <= 60) {
+			if (counter.append("[").append(normalizedName).append("]").length() <= 60) {
 				workingComponent.addExtra(entry.getValue());
 				workingComponent.addExtra(spacer);
 				counter.append(spacer);
-			}else{
+			} else {
 				finalComponents.add(workingComponent);
 				workingComponent = new TextComponent();
 				workingComponent.addExtra(entry.getValue());
@@ -170,7 +170,7 @@ public class DataHolder {
 		String spacer = "   ";
 		StringBuilder counter = new StringBuilder();
 
-		for(Category category : wiki.getCategoryList()){
+		for (Category category : wiki.getCategoryList()) {
 			if (category.getPermissionNode() != null && !player.hasPermission(category.getPermissionNode()))
 				continue;
 			String normalizedName = WordUtils.capitalizeFully(category.getName().replaceAll("_", " "));
@@ -181,11 +181,11 @@ public class DataHolder {
 		}
 		for (Map.Entry<Category, TextComponent> entry : workingList.entrySet()) {
 			String normalizedName = WordUtils.capitalizeFully(entry.getKey().getName().replaceAll("_", " "));
-			if(counter.append("[").append(normalizedName).append("]").length() <= 60) {
+			if (counter.append("[").append(normalizedName).append("]").length() <= 60) {
 				workingComponent.addExtra(entry.getValue());
 				workingComponent.addExtra(spacer);
 				counter.append(spacer);
-			}else{
+			} else {
 				finalComponents.add(workingComponent);
 				workingComponent = new TextComponent();
 				workingComponent.addExtra(entry.getValue());
@@ -207,7 +207,7 @@ public class DataHolder {
 		String spacer = "   ";
 		StringBuilder counter = new StringBuilder();
 
-		for(SubCategory subCategory : category.getSubCategoryList()){
+		for (SubCategory subCategory : category.getSubCategoryList()) {
 			if (subCategory.getPermissionNode() != null && !player.hasPermission(subCategory.getPermissionNode()))
 				continue;
 			String normalizedName = WordUtils.capitalizeFully(subCategory.getName().replaceAll("_", " "));
@@ -243,7 +243,7 @@ public class DataHolder {
 		String spacer = "   ";
 		StringBuilder counter = new StringBuilder();
 
-		for(Entry entry : subCategory.getEntryList()){
+		for (Entry entry : subCategory.getEntryList()) {
 			if (entry.getPermissionNode() != null && !player.hasPermission(entry.getPermissionNode()))
 				continue;
 			String normalizedName = WordUtils.capitalizeFully(subCategory.getName().replaceAll("_", " "));

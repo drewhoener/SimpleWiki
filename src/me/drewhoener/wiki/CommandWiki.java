@@ -33,14 +33,12 @@ class CommandWiki implements TabExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
 
-		if(!(sender instanceof Player)){
+		if (!(sender instanceof Player)) {
 			sender.sendMessage(RED + "Only players!");
 			return true;
 		}
 
 		this.runWikiCommand(((Player) sender), args);
-
-
 		return true;
 	}
 
@@ -52,7 +50,7 @@ class CommandWiki implements TabExecutor {
 		SubCategory subCategory;
 		Entry entry;
 
-		switch(length){
+		switch (length) {
 			case 0:
 				player.sendMessage(Util.getHeader("Wikis"));
 				player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "" + "Click the entries to navigate!");
@@ -63,7 +61,7 @@ class CommandWiki implements TabExecutor {
 				break;
 			case 1:
 				wiki = this.simpleWiki.dataHolder.getWikiByName(args[0]);
-				if(wiki == null){
+				if (wiki == null) {
 					player.sendMessage(RED + "Couldn't find the wiki requested!");
 					return;
 				}
@@ -73,7 +71,7 @@ class CommandWiki implements TabExecutor {
 				}
 
 				player.sendMessage(Util.getHeader(WordUtils.capitalizeFully(wiki.getName().replaceAll("_", " "))));
-				if(wiki.getSubHeader() != null)
+				if (wiki.getSubHeader() != null)
 					player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "" + wiki.getSubHeader());
 				for (TextComponent component : this.simpleWiki.dataHolder.formatCategoryEntries(wiki, player))
 					player.spigot().sendMessage(component);
@@ -81,12 +79,12 @@ class CommandWiki implements TabExecutor {
 				break;
 			case 2:
 				wiki = this.simpleWiki.dataHolder.getWikiByName(args[0]);
-				if(wiki == null){
+				if (wiki == null) {
 					player.sendMessage(RED + "Couldn't find the wiki requested!");
 					return;
 				}
 				category = this.simpleWiki.dataHolder.getCategory(wiki, args[1]);
-				if(category == null){
+				if (category == null) {
 					player.sendMessage(RED + "Couldn't find the category requested!");
 					return;
 				}
@@ -96,7 +94,7 @@ class CommandWiki implements TabExecutor {
 				}
 
 				player.sendMessage(Util.getHeader(WordUtils.capitalizeFully(category.getName().replaceAll("_", " "))));
-				if(category.getSubHeader() != null)
+				if (category.getSubHeader() != null)
 					player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "" + category.getSubHeader());
 				for (TextComponent component : this.simpleWiki.dataHolder.formatSubCategoryEntries(category, player))
 					player.spigot().sendMessage(component);
@@ -104,17 +102,17 @@ class CommandWiki implements TabExecutor {
 				break;
 			case 3:
 				wiki = this.simpleWiki.dataHolder.getWikiByName(args[0]);
-				if(wiki == null){
+				if (wiki == null) {
 					player.sendMessage(RED + "Couldn't find the wiki requested!");
 					return;
 				}
 				category = this.simpleWiki.dataHolder.getCategory(wiki, args[1]);
-				if(category == null){
+				if (category == null) {
 					player.sendMessage(RED + "Couldn't find the category requested!");
 					return;
 				}
 				subCategory = this.simpleWiki.dataHolder.getSubCategory(category, args[2]);
-				if(subCategory == null){
+				if (subCategory == null) {
 					player.sendMessage(RED + "Couldn't find the sub-category requested!");
 					return;
 				}
@@ -123,7 +121,7 @@ class CommandWiki implements TabExecutor {
 					return;
 				}
 				player.sendMessage(Util.getHeader(WordUtils.capitalizeFully(subCategory.getName().replaceAll("_", " "))));
-				if(subCategory.getSubHeader() != null)
+				if (subCategory.getSubHeader() != null)
 					player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "" + subCategory.getSubHeader());
 				for (TextComponent component : this.simpleWiki.dataHolder.formatEntries(subCategory, player))
 					player.spigot().sendMessage(component);
@@ -131,22 +129,22 @@ class CommandWiki implements TabExecutor {
 				break;
 			case 4:
 				wiki = this.simpleWiki.dataHolder.getWikiByName(args[0]);
-				if(wiki == null){
+				if (wiki == null) {
 					player.sendMessage(RED + "Couldn't find the wiki requested!");
 					return;
 				}
 				category = this.simpleWiki.dataHolder.getCategory(wiki, args[1]);
-				if(category == null){
+				if (category == null) {
 					player.sendMessage(RED + "Couldn't find the category requested!");
 					return;
 				}
 				subCategory = this.simpleWiki.dataHolder.getSubCategory(category, args[2]);
-				if(subCategory == null){
+				if (subCategory == null) {
 					player.sendMessage(RED + "Couldn't find the sub-category requested!");
 					return;
 				}
 				entry = this.simpleWiki.dataHolder.getEntry(subCategory, args[3]);
-				if(entry == null){
+				if (entry == null) {
 					player.sendMessage(RED + "Couldn't find the entry requested!");
 					return;
 				}
@@ -154,7 +152,7 @@ class CommandWiki implements TabExecutor {
 					player.sendMessage(ChatColor.RED + "You don't have permission to view this Entry!");
 					return;
 				}
-				if(!entry.getRecipeList().isEmpty()) {
+				if (!entry.getRecipeList().isEmpty()) {
 					Inventory inv = this.simpleWiki.getServer().createInventory(player, InventoryType.WORKBENCH);
 					inv.setStorageContents(entry.getRecipeList().toArray(new ItemStack[10]));
 					this.simpleWiki.dataHolder.noInteract.add(player.getUniqueId());
@@ -162,7 +160,7 @@ class CommandWiki implements TabExecutor {
 					player.updateInventory();
 				}
 				player.sendMessage(Util.getHeader(WordUtils.capitalizeFully(entry.getName().replaceAll("_", " "))));
-				for(String line : entry.getDescriptionList()) {
+				for (String line : entry.getDescriptionList()) {
 					player.sendMessage(ChatColor.translateAlternateColorCodes('&', line));
 				}
 				player.sendMessage(Util.getEnd());
