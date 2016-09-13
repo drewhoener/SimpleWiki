@@ -1,6 +1,5 @@
 package me.drewhoener.wiki.data;
 
-import me.drewhoener.wiki.SimpleWiki;
 import me.drewhoener.wiki.pages.Category;
 import me.drewhoener.wiki.pages.Entry;
 import me.drewhoener.wiki.pages.PluginWiki;
@@ -26,14 +25,8 @@ import java.util.UUID;
 @SuppressWarnings("Duplicates")
 public class DataHolder {
 
-	private SimpleWiki simpleWiki;
-
 	private List<PluginWiki> wikiList = new ArrayList<>();
 	public List<UUID> noInteract = new ArrayList<>();
-
-	public DataHolder(SimpleWiki simpleWiki) {
-		this.simpleWiki = simpleWiki;
-	}
 
 	public void addWiki(PluginWiki wiki){
 		this.wikiList.add(wiki);

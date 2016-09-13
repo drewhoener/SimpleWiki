@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 public class SimpleWiki extends JavaPlugin implements Listener{
 
-	public DataHolder dataHolder;
+	DataHolder dataHolder;
 	public static final File dataFolder = new File("plugins", "SimpleWiki");
 
 	public void onEnable(){
@@ -41,7 +41,7 @@ public class SimpleWiki extends JavaPlugin implements Listener{
 			this.saveDefaultConfig();
 		}
 
-		this.dataHolder = new DataHolder(this);
+		this.dataHolder = new DataHolder();
 
 		this.indexFiles();
 
@@ -73,7 +73,7 @@ public class SimpleWiki extends JavaPlugin implements Listener{
 		return true;
 	}
 
-	public void indexFiles(){
+	private void indexFiles() {
 		if(Util.WIKI_DIR.exists()){
 			File[] files = Util.WIKI_DIR.listFiles();
 			if(files != null)

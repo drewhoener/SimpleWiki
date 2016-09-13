@@ -1,5 +1,5 @@
 name: SimpleWiki
-version: 0.0.1
+version: 1.1.4
 main: me.drewhoener.wiki.SimpleWiki
 commands:
   testing:
