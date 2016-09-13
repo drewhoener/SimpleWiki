@@ -1,5 +1,6 @@
 package me.drewhoener.wiki;
 
+import com.google.common.collect.ImmutableList;
 import me.drewhoener.wiki.pages.Category;
 import me.drewhoener.wiki.pages.Entry;
 import me.drewhoener.wiki.pages.PluginWiki;
@@ -9,16 +10,19 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.bukkit.ChatColor.RED;
 
-public class CommandWiki implements CommandExecutor {
+public class CommandWiki implements TabExecutor {
 
 	private final SimpleWiki simpleWiki;
 
@@ -63,6 +67,10 @@ public class CommandWiki implements CommandExecutor {
 					player.sendMessage(RED + "Couldn't find the wiki requested!");
 					return;
 				}
+				if (wiki.getPermissionNode() != null && !player.hasPermission(wiki.getPermissionNode())) {
+					player.sendMessage(ChatColor.RED + "You don't have permission to view this Wiki!");
+					return;
+				}
 
 				player.sendMessage(Util.getHeader(WordUtils.capitalizeFully(wiki.getName().replaceAll("_", " "))));
 				if(wiki.getSubHeader() != null)
@@ -80,6 +88,10 @@ public class CommandWiki implements CommandExecutor {
 				category = this.simpleWiki.dataHolder.getCategory(wiki, args[1]);
 				if(category == null){
 					player.sendMessage(RED + "Couldn't find the category requested!");
+					return;
+				}
+				if (category.getPermissionNode() != null && !player.hasPermission(category.getPermissionNode())) {
+					player.sendMessage(ChatColor.RED + "You don't have permission to view this Category!");
 					return;
 				}
 
@@ -104,6 +116,10 @@ public class CommandWiki implements CommandExecutor {
 				subCategory = this.simpleWiki.dataHolder.getSubCategory(category, args[2]);
 				if(subCategory == null){
 					player.sendMessage(RED + "Couldn't find the sub-ctategory requested!");
+					return;
+				}
+				if (subCategory.getPermissionNode() != null && !player.hasPermission(subCategory.getPermissionNode())) {
+					player.sendMessage(ChatColor.RED + "You don't have permission to view this SubCategory!");
 					return;
 				}
 				player.sendMessage(Util.getHeader(WordUtils.capitalizeFully(subCategory.getName().replaceAll("_", " "))));
@@ -134,6 +150,10 @@ public class CommandWiki implements CommandExecutor {
 					player.sendMessage(RED + "Couldn't find the entry requested!");
 					return;
 				}
+				if (entry.getPermissionNode() != null && !player.hasPermission(entry.getPermissionNode())) {
+					player.sendMessage(ChatColor.RED + "You don't have permission to view this Entry!");
+					return;
+				}
 				if(!entry.getRecipeList().isEmpty()) {
 					Inventory inv = this.simpleWiki.getServer().createInventory(player, InventoryType.WORKBENCH);
 					inv.setStorageContents(entry.getRecipeList().toArray(new ItemStack[10]));
@@ -151,5 +171,89 @@ public class CommandWiki implements CommandExecutor {
 				break;
 		}
 
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
+
+		List<String> results = new ArrayList<>();
+		String search = "";
+
+		if (commandSender instanceof Player) {
+
+			Player player = ((Player) commandSender);
+
+			PluginWiki wiki;
+			Category category;
+			SubCategory subCategory;
+			Entry entry;
+			switch (args.length) {
+				case 0:
+					results.addAll(this.simpleWiki.dataHolder.getWikiNames(player));
+					break;
+				case 1:
+					search = args[0];
+					wiki = this.simpleWiki.dataHolder.getWikiByName(search);
+					if (wiki != null) {
+						results.addAll(this.simpleWiki.dataHolder.getCategoryNames(wiki, player));
+					}
+					for (String str : this.simpleWiki.dataHolder.getWikiNames(player))
+						if (str.toLowerCase().startsWith(search.toLowerCase()))
+							results.add(str);
+
+					break;
+				case 2:
+					search = args[1];
+					wiki = this.simpleWiki.dataHolder.getWikiByName(args[0]);
+					if (wiki != null) {
+						category = this.simpleWiki.dataHolder.getCategory(wiki, search);
+						if (category != null) {
+							results.addAll(this.simpleWiki.dataHolder.getSubCategoryNames(category, player));
+						}
+						for (String str : this.simpleWiki.dataHolder.getCategoryNames(wiki, player))
+							if (str.toLowerCase().startsWith(search.toLowerCase()))
+								results.add(str);
+					}
+
+					break;
+				case 3:
+					search = args[2];
+					wiki = this.simpleWiki.dataHolder.getWikiByName(args[0]);
+					if (wiki != null) {
+						category = this.simpleWiki.dataHolder.getCategory(wiki, args[1]);
+						if (category != null) {
+							subCategory = this.simpleWiki.dataHolder.getSubCategory(category, search);
+							if (subCategory != null) {
+								results.addAll(this.simpleWiki.dataHolder.getEntryNames(subCategory, player));
+							}
+							for (String str : this.simpleWiki.dataHolder.getSubCategoryNames(category, player))
+								if (str.toLowerCase().startsWith(search.toLowerCase()))
+									results.add(str);
+						}
+					}
+
+					break;
+				case 4:
+					search = args[3];
+					wiki = this.simpleWiki.dataHolder.getWikiByName(args[0]);
+					if (wiki != null) {
+						category = this.simpleWiki.dataHolder.getCategory(wiki, args[1]);
+						if (category != null) {
+							subCategory = this.simpleWiki.dataHolder.getSubCategory(category, args[2]);
+							if (subCategory != null) {
+								for (String str : this.simpleWiki.dataHolder.getEntryNames(subCategory, player))
+									if (str.toLowerCase().startsWith(search.toLowerCase()))
+										results.add(str);
+							}
+
+						}
+					}
+				default:
+					break;
+			}
+			return results;
+		}
+
+		return ImmutableList.of();
 	}
 }
