@@ -140,9 +140,8 @@ public class DataHolder {
 		StringBuilder counter = new StringBuilder();
 
 		for(PluginWiki wiki : this.wikiList){
-			if (wiki.getPermissionNode() != null)
-				if (!player.hasPermission(wiki.getPermissionNode()))
-					continue;
+			if (wiki.getPermissionNode() != null && !player.hasPermission(wiki.getPermissionNode()))
+				continue;
 			String normalizedName = WordUtils.capitalizeFully(wiki.getName().replaceAll("_", " "));
 			ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " wiki");
 			workingList.put(wiki, getFormattedPiece(normalizedName,
@@ -179,9 +178,8 @@ public class DataHolder {
 		StringBuilder counter = new StringBuilder();
 
 		for(Category category : wiki.getCategoryList()){
-			if (category.getPermissionNode() != null)
-				if (!player.hasPermission(category.getPermissionNode()))
-					continue;
+			if (category.getPermissionNode() != null && !player.hasPermission(category.getPermissionNode()))
+				continue;
 			String normalizedName = WordUtils.capitalizeFully(category.getName().replaceAll("_", " "));
 			ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " category");
 			workingList.put(category, getFormattedPiece(normalizedName,
@@ -217,9 +215,8 @@ public class DataHolder {
 		StringBuilder counter = new StringBuilder();
 
 		for(SubCategory subCategory : category.getSubCategoryList()){
-			if (subCategory.getPermissionNode() != null)
-				if (!player.hasPermission(subCategory.getPermissionNode()))
-					continue;
+			if (subCategory.getPermissionNode() != null && !player.hasPermission(subCategory.getPermissionNode()))
+				continue;
 			String normalizedName = WordUtils.capitalizeFully(subCategory.getName().replaceAll("_", " "));
 			ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " sub-category");
 			workingList.put(subCategory, getFormattedPiece(normalizedName,
@@ -254,9 +251,8 @@ public class DataHolder {
 		StringBuilder counter = new StringBuilder();
 
 		for(Entry entry : subCategory.getEntryList()){
-			if (entry.getPermissionNode() != null)
-				if (!player.hasPermission(entry.getPermissionNode()))
-					continue;
+			if (entry.getPermissionNode() != null && !player.hasPermission(entry.getPermissionNode()))
+				continue;
 			String normalizedName = WordUtils.capitalizeFully(subCategory.getName().replaceAll("_", " "));
 			workingList.put(entry, getFormattedPiece(normalizedName,
 					new HoverEvent(HoverEvent.Action.SHOW_TEXT, entry.getHover()),
