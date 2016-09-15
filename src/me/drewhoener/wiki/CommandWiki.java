@@ -7,6 +7,7 @@ import me.drewhoener.wiki.pages.PluginWiki;
 import me.drewhoener.wiki.pages.SubCategory;
 import me.drewhoener.wiki.util.Util;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.command.Command;
@@ -55,8 +56,8 @@ class CommandWiki implements TabExecutor {
 				player.sendMessage(Util.getHeader("Wikis"));
 				player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "" + "Click the entries to navigate!");
 
-				for (TextComponent component : this.simpleWiki.dataHolder.formatWikiEntries(player))
-					player.spigot().sendMessage(component);
+				for (TextComponent[] component : this.simpleWiki.dataHolder.formatWikiEntries(player))
+					player.spigot().sendMessage((BaseComponent[]) component);
 				player.sendMessage(Util.getEnd());
 				break;
 			case 1:
@@ -73,8 +74,8 @@ class CommandWiki implements TabExecutor {
 				player.sendMessage(Util.getHeader(WordUtils.capitalizeFully(wiki.getName().replaceAll("_", " "))));
 				if (wiki.getSubHeader() != null)
 					player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "" + wiki.getSubHeader());
-				for (TextComponent component : this.simpleWiki.dataHolder.formatCategoryEntries(wiki, player))
-					player.spigot().sendMessage(component);
+				for (TextComponent[] component : this.simpleWiki.dataHolder.formatCategoryEntries(wiki, player))
+					player.spigot().sendMessage((BaseComponent[]) component);
 				player.sendMessage(Util.getEnd());
 				break;
 			case 2:
@@ -96,8 +97,8 @@ class CommandWiki implements TabExecutor {
 				player.sendMessage(Util.getHeader(WordUtils.capitalizeFully(category.getName().replaceAll("_", " "))));
 				if (category.getSubHeader() != null)
 					player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "" + category.getSubHeader());
-				for (TextComponent component : this.simpleWiki.dataHolder.formatSubCategoryEntries(category, player))
-					player.spigot().sendMessage(component);
+				for (TextComponent[] component : this.simpleWiki.dataHolder.formatSubCategoryEntries(category, player))
+					player.spigot().sendMessage((BaseComponent[]) component);
 				player.sendMessage(Util.getEnd());
 				break;
 			case 3:
@@ -123,8 +124,8 @@ class CommandWiki implements TabExecutor {
 				player.sendMessage(Util.getHeader(WordUtils.capitalizeFully(subCategory.getName().replaceAll("_", " "))));
 				if (subCategory.getSubHeader() != null)
 					player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "" + subCategory.getSubHeader());
-				for (TextComponent component : this.simpleWiki.dataHolder.formatEntries(subCategory, player))
-					player.spigot().sendMessage(component);
+				for (TextComponent[] component : this.simpleWiki.dataHolder.formatEntries(subCategory, player))
+					player.spigot().sendMessage((BaseComponent[]) component);
 				player.sendMessage(Util.getEnd());
 				break;
 			case 4:

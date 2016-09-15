@@ -2,6 +2,7 @@ package me.drewhoener.wiki.data;
 
 import me.drewhoener.wiki.pages.Category;
 import me.drewhoener.wiki.pages.Entry;
+import me.drewhoener.wiki.pages.INamable;
 import me.drewhoener.wiki.pages.PluginWiki;
 import me.drewhoener.wiki.pages.SubCategory;
 import net.md_5.bungee.api.ChatColor;
@@ -13,13 +14,13 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 
 @SuppressWarnings("Duplicates")
@@ -40,14 +41,12 @@ public class DataHolder {
 		this.wikiList.clear();
 	}
 
-	private void sortList() {
-		Collections.sort(this.wikiList, new Comparator<PluginWiki>() {
-			@Override
-			public int compare(PluginWiki o1, PluginWiki o2) {
-				return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-			}
-		});
-	}
+	private Comparator<INamable> namableComparator = new Comparator<INamable>() {
+		@Override
+		public int compare(INamable o1, INamable o2) {
+			return o1.getName().compareToIgnoreCase(o2.getName());
+		}
+	};
 
 	public PluginWiki getWikiByName(String arg) {
 		for (PluginWiki wiki : this.wikiList)
@@ -123,12 +122,11 @@ public class DataHolder {
 		return names;
 	}
 
-	public TextComponent[] formatWikiEntries(Player player) {
+	public TextComponent[][] formatWikiEntries(Player player) {
 
-		this.sortList();
-		Map<PluginWiki, TextComponent> workingList = new HashMap<>();
-		List<TextComponent> finalComponents = new ArrayList<>();
-		TextComponent workingComponent = new TextComponent();
+		TreeMap<PluginWiki, TextComponent> workingList = new TreeMap<>(namableComparator);
+		LinkedList<TextComponent[]> finalComponents = new LinkedList<>();
+		LinkedList<TextComponent> workingComponent = new LinkedList<>();
 		String spacer = "   ";
 		StringBuilder counter = new StringBuilder();
 
@@ -144,29 +142,27 @@ public class DataHolder {
 		for (Map.Entry<PluginWiki, TextComponent> entry : workingList.entrySet()) {
 			String normalizedName = WordUtils.capitalizeFully(entry.getKey().getName().replaceAll("_", " "));
 			if (counter.append("[").append(normalizedName).append("]").length() <= 60) {
-				workingComponent.addExtra(entry.getValue());
-				workingComponent.addExtra(spacer);
+				workingComponent.add(entry.getValue());
+				workingComponent.add(new TextComponent(TextComponent.fromLegacyText(spacer)));
 				counter.append(spacer);
 			} else {
-				finalComponents.add(workingComponent);
-				workingComponent = new TextComponent();
-				workingComponent.addExtra(entry.getValue());
-				workingComponent.addExtra(spacer);
+				finalComponents.add(workingComponent.toArray(new TextComponent[finalComponents.size()]));
+				workingComponent.clear();
+				workingComponent.add(entry.getValue());
+				workingComponent.add(new TextComponent(TextComponent.fromLegacyText(spacer)));
 				counter = new StringBuilder("").append("[").append(normalizedName).append("]").append(spacer);
 			}
 		}
-		finalComponents.add(workingComponent);
+		finalComponents.add(workingComponent.toArray(new TextComponent[finalComponents.size()]));
 
-
-		return finalComponents.toArray(new TextComponent[finalComponents.size()]);
+		return finalComponents.toArray(new TextComponent[finalComponents.size()][]);
 	}
 
-	public TextComponent[] formatCategoryEntries(PluginWiki wiki, Player player) {
+	public TextComponent[][] formatCategoryEntries(PluginWiki wiki, Player player) {
 
-		wiki.sortCategories();
-		Map<Category, TextComponent> workingList = new HashMap<>();
-		List<TextComponent> finalComponents = new ArrayList<>();
-		TextComponent workingComponent = new TextComponent();
+		TreeMap<Category, TextComponent> workingList = new TreeMap<>(namableComparator);
+		LinkedList<TextComponent[]> finalComponents = new LinkedList<>();
+		LinkedList<TextComponent> workingComponent = new LinkedList<>();
 		String spacer = "   ";
 		StringBuilder counter = new StringBuilder();
 
@@ -182,28 +178,27 @@ public class DataHolder {
 		for (Map.Entry<Category, TextComponent> entry : workingList.entrySet()) {
 			String normalizedName = WordUtils.capitalizeFully(entry.getKey().getName().replaceAll("_", " "));
 			if (counter.append("[").append(normalizedName).append("]").length() <= 60) {
-				workingComponent.addExtra(entry.getValue());
-				workingComponent.addExtra(spacer);
+				workingComponent.add(entry.getValue());
+				workingComponent.add(new TextComponent(TextComponent.fromLegacyText(spacer)));
 				counter.append(spacer);
 			} else {
-				finalComponents.add(workingComponent);
-				workingComponent = new TextComponent();
-				workingComponent.addExtra(entry.getValue());
-				workingComponent.addExtra(spacer);
+				finalComponents.add(workingComponent.toArray(new TextComponent[finalComponents.size()]));
+				workingComponent.clear();
+				workingComponent.add(entry.getValue());
+				workingComponent.add(new TextComponent(TextComponent.fromLegacyText(spacer)));
 				counter = new StringBuilder("").append("[").append(normalizedName).append("]").append(spacer);
 			}
 		}
-		finalComponents.add(workingComponent);
+		finalComponents.add(workingComponent.toArray(new TextComponent[finalComponents.size()]));
 
-		return finalComponents.toArray(new TextComponent[finalComponents.size()]);
+		return finalComponents.toArray(new TextComponent[finalComponents.size()][]);
 
 	}
 
-	public TextComponent[] formatSubCategoryEntries(Category category, Player player) {
-		category.sortSubCategories();
-		Map<SubCategory, TextComponent> workingList = new HashMap<>();
-		List<TextComponent> finalComponents = new ArrayList<>();
-		TextComponent workingComponent = new TextComponent();
+	public TextComponent[][] formatSubCategoryEntries(Category category, Player player) {
+		TreeMap<SubCategory, TextComponent> workingList = new TreeMap<>(namableComparator);
+		LinkedList<TextComponent[]> finalComponents = new LinkedList<>();
+		LinkedList<TextComponent> workingComponent = new LinkedList<>();
 		String spacer = "   ";
 		StringBuilder counter = new StringBuilder();
 
@@ -219,34 +214,33 @@ public class DataHolder {
 		for (Map.Entry<SubCategory, TextComponent> entry : workingList.entrySet()) {
 			String normalizedName = WordUtils.capitalizeFully(entry.getKey().getName().replaceAll("_", " "));
 			if (counter.append("[").append(normalizedName).append("]").length() <= 60) {
-				workingComponent.addExtra(entry.getValue());
-				workingComponent.addExtra(spacer);
+				workingComponent.add(entry.getValue());
+				workingComponent.add(new TextComponent(TextComponent.fromLegacyText(spacer)));
 				counter.append(spacer);
 			} else {
-				finalComponents.add(workingComponent);
-				workingComponent = new TextComponent();
-				workingComponent.addExtra(entry.getValue());
-				workingComponent.addExtra(spacer);
+				finalComponents.add(workingComponent.toArray(new TextComponent[finalComponents.size()]));
+				workingComponent.clear();
+				workingComponent.add(entry.getValue());
+				workingComponent.add(new TextComponent(TextComponent.fromLegacyText(spacer)));
 				counter = new StringBuilder("").append("[").append(normalizedName).append("]").append(spacer);
 			}
 		}
-		finalComponents.add(workingComponent);
+		finalComponents.add(workingComponent.toArray(new TextComponent[finalComponents.size()]));
 
-		return finalComponents.toArray(new TextComponent[finalComponents.size()]);
+		return finalComponents.toArray(new TextComponent[finalComponents.size()][]);
 	}
 
-	public TextComponent[] formatEntries(SubCategory subCategory, Player player) {
-		subCategory.sortEntries();
-		Map<Entry, TextComponent> workingList = new HashMap<>();
-		List<TextComponent> finalComponents = new ArrayList<>();
-		TextComponent workingComponent = new TextComponent();
+	public TextComponent[][] formatEntries(SubCategory subCategory, Player player) {
+		TreeMap<Entry, TextComponent> workingList = new TreeMap<>(namableComparator);
+		LinkedList<TextComponent[]> finalComponents = new LinkedList<>();
+		LinkedList<TextComponent> workingComponent = new LinkedList<>();
 		String spacer = "   ";
 		StringBuilder counter = new StringBuilder();
 
 		for (Entry entry : subCategory.getEntryList()) {
 			if (entry.getPermissionNode() != null && !player.hasPermission(entry.getPermissionNode()))
 				continue;
-			String normalizedName = WordUtils.capitalizeFully(subCategory.getName().replaceAll("_", " "));
+			String normalizedName = WordUtils.capitalizeFully(entry.getName().replaceAll("_", " "));
 			workingList.put(entry, getFormattedPiece(normalizedName,
 					new HoverEvent(HoverEvent.Action.SHOW_TEXT, entry.getHover()),
 					new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + entry.getParent().getParent().getParent().getName().toLowerCase() + " " + entry.getParent().getParent().getName() + " " + entry.getParent().getName() + " " + entry.getName())));
@@ -254,20 +248,20 @@ public class DataHolder {
 		for (Map.Entry<Entry, TextComponent> entry : workingList.entrySet()) {
 			String normalizedName = WordUtils.capitalizeFully(entry.getKey().getName().replaceAll("_", " "));
 			if (counter.append("[").append(normalizedName).append("]").length() <= 60) {
-				workingComponent.addExtra(entry.getValue());
-				workingComponent.addExtra(spacer);
+				workingComponent.add(entry.getValue());
+				workingComponent.add(new TextComponent(TextComponent.fromLegacyText(spacer)));
 				counter.append(spacer);
 			} else {
-				finalComponents.add(workingComponent);
-				workingComponent = new TextComponent();
-				workingComponent.addExtra(entry.getValue());
-				workingComponent.addExtra(spacer);
+				finalComponents.add(workingComponent.toArray(new TextComponent[finalComponents.size()]));
+				workingComponent.clear();
+				workingComponent.add(entry.getValue());
+				workingComponent.add(new TextComponent(TextComponent.fromLegacyText(spacer)));
 				counter = new StringBuilder("").append("[").append(normalizedName).append("]").append(spacer);
 			}
 		}
-		finalComponents.add(workingComponent);
+		finalComponents.add(workingComponent.toArray(new TextComponent[finalComponents.size()]));
 
-		return finalComponents.toArray(new TextComponent[finalComponents.size()]);
+		return finalComponents.toArray(new TextComponent[finalComponents.size()][]);
 	}
 
 	private TextComponent getFormattedPiece(String normalizedName, HoverEvent hoverEvent, ClickEvent clickEvent) {
@@ -276,7 +270,7 @@ public class DataHolder {
 				.event(clickEvent)
 				.append("[").color(ChatColor.DARK_GREEN)
 				.append(normalizedName).color(ChatColor.GRAY)
-				.append("[").color(ChatColor.DARK_GREEN);
+				.append("]").color(ChatColor.DARK_GREEN);
 		return new TextComponent(builder.create());
 	}
 
