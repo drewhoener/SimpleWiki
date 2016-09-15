@@ -2,7 +2,7 @@ package me.drewhoener.wiki.data;
 
 import me.drewhoener.wiki.pages.Category;
 import me.drewhoener.wiki.pages.Entry;
-import me.drewhoener.wiki.pages.INamable;
+import me.drewhoener.wiki.pages.INameable;
 import me.drewhoener.wiki.pages.PluginWiki;
 import me.drewhoener.wiki.pages.SubCategory;
 import net.md_5.bungee.api.ChatColor;
@@ -41,9 +41,9 @@ public class DataHolder {
 		this.wikiList.clear();
 	}
 
-	private Comparator<INamable> namableComparator = new Comparator<INamable>() {
+	private Comparator<INameable> nameableComparator = new Comparator<INameable>() {
 		@Override
-		public int compare(INamable o1, INamable o2) {
+		public int compare(INameable o1, INameable o2) {
 			return o1.getName().compareToIgnoreCase(o2.getName());
 		}
 	};
@@ -124,7 +124,7 @@ public class DataHolder {
 
 	public TextComponent[][] formatWikiEntries(Player player) {
 
-		TreeMap<PluginWiki, TextComponent> workingList = new TreeMap<>(namableComparator);
+		TreeMap<PluginWiki, TextComponent> workingList = new TreeMap<>(nameableComparator);
 		LinkedList<TextComponent[]> finalComponents = new LinkedList<>();
 		LinkedList<TextComponent> workingComponent = new LinkedList<>();
 		String spacer = "   ";
@@ -160,7 +160,7 @@ public class DataHolder {
 
 	public TextComponent[][] formatCategoryEntries(PluginWiki wiki, Player player) {
 
-		TreeMap<Category, TextComponent> workingList = new TreeMap<>(namableComparator);
+		TreeMap<Category, TextComponent> workingList = new TreeMap<>(nameableComparator);
 		LinkedList<TextComponent[]> finalComponents = new LinkedList<>();
 		LinkedList<TextComponent> workingComponent = new LinkedList<>();
 		String spacer = "   ";
@@ -196,7 +196,7 @@ public class DataHolder {
 	}
 
 	public TextComponent[][] formatSubCategoryEntries(Category category, Player player) {
-		TreeMap<SubCategory, TextComponent> workingList = new TreeMap<>(namableComparator);
+		TreeMap<SubCategory, TextComponent> workingList = new TreeMap<>(nameableComparator);
 		LinkedList<TextComponent[]> finalComponents = new LinkedList<>();
 		LinkedList<TextComponent> workingComponent = new LinkedList<>();
 		String spacer = "   ";
@@ -231,7 +231,7 @@ public class DataHolder {
 	}
 
 	public TextComponent[][] formatEntries(SubCategory subCategory, Player player) {
-		TreeMap<Entry, TextComponent> workingList = new TreeMap<>(namableComparator);
+		TreeMap<Entry, TextComponent> workingList = new TreeMap<>(nameableComparator);
 		LinkedList<TextComponent[]> finalComponents = new LinkedList<>();
 		LinkedList<TextComponent> workingComponent = new LinkedList<>();
 		String spacer = "   ";

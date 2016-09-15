@@ -6,7 +6,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Category implements INamable {
+public class Category implements INameable {
 
 	private String name;
 	private PluginWiki parent;

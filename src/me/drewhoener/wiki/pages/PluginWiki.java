@@ -6,7 +6,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PluginWiki implements INamable {
+public class PluginWiki implements INameable {
 
 	private String name;
 	String permissionNode;

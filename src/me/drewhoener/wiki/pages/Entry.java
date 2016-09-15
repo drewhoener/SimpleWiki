@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Entry implements INamable {
+public class Entry implements INameable {
 	private SubCategory parent;
 	private String name;
 	private String color;

@@ -1,6 +1,6 @@
 package me.drewhoener.wiki.pages;
 
-public interface INamable {
+public interface INameable {
 
 	String getName();
 }

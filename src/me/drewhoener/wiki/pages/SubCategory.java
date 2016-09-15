@@ -6,7 +6,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SubCategory implements INamable {
+public class SubCategory implements INameable {
 
 	private String name;
 	private List<Entry> entryList = new LinkedList<>();
