@@ -1,5 +1,7 @@
 package me.drewhoener.wiki.pages;
 
+import me.drewhoener.wiki.pages.generic.INameable;
+import me.drewhoener.wiki.util.Util;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -8,6 +10,7 @@ import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -37,7 +40,8 @@ public class Entry implements INameable {
 				configurationSection.getStringList("text"), new ItemStack(Material.matchMaterial(configurationSection.getString("itemType", "DIRT"))));
 		if (configurationSection.contains("recipe")) {
 			for (String s : configurationSection.getStringList("recipe")) {
-				Bukkit.getLogger().severe("ItemStack: " + s);
+				if (Util.Config.DEBUG)
+					Bukkit.getLogger().severe("ItemStack: " + s);
 				this.recipeList.add(new ItemStack(Material.matchMaterial(s)));
 			}
 
@@ -60,8 +64,8 @@ public class Entry implements INameable {
 		return descriptionList;
 	}
 
-	public String getPermissionNode() {
-		return permissionNode;
+	public boolean hasPermission(Player player) {
+		return this.parent.hasPermission(player) && Util.simplePermissionCheck(player, this.permissionNode);
 	}
 
 	@SuppressWarnings("unchecked")

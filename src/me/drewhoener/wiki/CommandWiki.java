@@ -66,7 +66,7 @@ class CommandWiki implements TabExecutor {
 					player.sendMessage(RED + "Couldn't find the wiki requested!");
 					return;
 				}
-				if (wiki.getPermissionNode() != null && !player.hasPermission(wiki.getPermissionNode())) {
+				if (!wiki.hasPermission(player)) {
 					player.sendMessage(ChatColor.RED + "You don't have permission to view this Wiki!");
 					return;
 				}
@@ -89,7 +89,7 @@ class CommandWiki implements TabExecutor {
 					player.sendMessage(RED + "Couldn't find the category requested!");
 					return;
 				}
-				if (category.getPermissionNode() != null && !player.hasPermission(category.getPermissionNode())) {
+				if (!category.hasPermission(player)) {
 					player.sendMessage(ChatColor.RED + "You don't have permission to view this Category!");
 					return;
 				}
@@ -117,7 +117,7 @@ class CommandWiki implements TabExecutor {
 					player.sendMessage(RED + "Couldn't find the sub-category requested!");
 					return;
 				}
-				if (subCategory.getPermissionNode() != null && !player.hasPermission(subCategory.getPermissionNode())) {
+				if (!subCategory.hasPermission(player)) {
 					player.sendMessage(ChatColor.RED + "You don't have permission to view this SubCategory!");
 					return;
 				}
@@ -149,7 +149,7 @@ class CommandWiki implements TabExecutor {
 					player.sendMessage(RED + "Couldn't find the entry requested!");
 					return;
 				}
-				if (entry.getPermissionNode() != null && !player.hasPermission(entry.getPermissionNode())) {
+				if (!entry.hasPermission(player)) {
 					player.sendMessage(ChatColor.RED + "You don't have permission to view this Entry!");
 					return;
 				}

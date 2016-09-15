@@ -1,7 +1,9 @@
 package me.drewhoener.wiki.pages;
 
+import me.drewhoener.wiki.pages.generic.INameable;
 import me.drewhoener.wiki.util.Util;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -43,8 +45,8 @@ public class Category implements INameable {
 		return parent;
 	}
 
-	public String getPermissionNode() {
-		return permissionNode;
+	public boolean hasPermission(Player player) {
+		return this.parent.hasPermission(player) && Util.simplePermissionCheck(player, this.permissionNode);
 	}
 
 	public String getSubHeader() {

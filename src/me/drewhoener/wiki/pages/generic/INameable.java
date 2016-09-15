@@ -1,4 +1,4 @@
-package me.drewhoener.wiki.pages;
+package me.drewhoener.wiki.pages.generic;
 
 public interface INameable {
 

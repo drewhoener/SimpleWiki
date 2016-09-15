@@ -2,7 +2,7 @@ package me.drewhoener.wiki.data;
 
 import me.drewhoener.wiki.pages.Category;
 import me.drewhoener.wiki.pages.Entry;
-import me.drewhoener.wiki.pages.INameable;
+import me.drewhoener.wiki.pages.generic.INameable;
 import me.drewhoener.wiki.pages.PluginWiki;
 import me.drewhoener.wiki.pages.SubCategory;
 import net.md_5.bungee.api.ChatColor;
@@ -82,7 +82,7 @@ public class DataHolder {
 		Set<String> names = new HashSet<>();
 		for (PluginWiki wiki : this.wikiList) {
 			if (player != null)
-				if (wiki.getPermissionNode() != null && !player.hasPermission(wiki.getPermissionNode()))
+				if (!wiki.hasPermission(player))
 					continue;
 			names.add(wiki.getName());
 		}
@@ -93,7 +93,7 @@ public class DataHolder {
 		Set<String> names = new HashSet<>();
 		for (Category category : wiki.getCategoryList()) {
 			if (player != null)
-				if (category.getPermissionNode() != null && !player.hasPermission(category.getPermissionNode()))
+				if (!category.hasPermission(player))
 					continue;
 			names.add(category.getName());
 		}
@@ -104,7 +104,7 @@ public class DataHolder {
 		Set<String> names = new HashSet<>();
 		for (SubCategory subcat : category.getSubCategoryList()) {
 			if (player != null)
-				if (subcat.getPermissionNode() != null && !player.hasPermission(subcat.getPermissionNode()))
+				if (!subcat.hasPermission(player))
 					continue;
 			names.add(subcat.getName());
 		}
@@ -115,7 +115,7 @@ public class DataHolder {
 		Set<String> names = new HashSet<>();
 		for (Entry entry : subCategory.getEntryList()) {
 			if (player != null)
-				if (entry.getPermissionNode() != null && !player.hasPermission(entry.getPermissionNode()))
+				if (!entry.hasPermission(player))
 					continue;
 			names.add(entry.getName());
 		}
@@ -131,7 +131,7 @@ public class DataHolder {
 		StringBuilder counter = new StringBuilder();
 
 		for (PluginWiki wiki : this.wikiList) {
-			if (wiki.getPermissionNode() != null && !player.hasPermission(wiki.getPermissionNode()))
+			if (!wiki.hasPermission(player))
 				continue;
 			String normalizedName = WordUtils.capitalizeFully(wiki.getName().replaceAll("_", " "));
 			ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " wiki");
@@ -167,7 +167,7 @@ public class DataHolder {
 		StringBuilder counter = new StringBuilder();
 
 		for (Category category : wiki.getCategoryList()) {
-			if (category.getPermissionNode() != null && !player.hasPermission(category.getPermissionNode()))
+			if (!category.hasPermission(player))
 				continue;
 			String normalizedName = WordUtils.capitalizeFully(category.getName().replaceAll("_", " "));
 			ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " category");
@@ -203,7 +203,7 @@ public class DataHolder {
 		StringBuilder counter = new StringBuilder();
 
 		for (SubCategory subCategory : category.getSubCategoryList()) {
-			if (subCategory.getPermissionNode() != null && !player.hasPermission(subCategory.getPermissionNode()))
+			if (!subCategory.hasPermission(player))
 				continue;
 			String normalizedName = WordUtils.capitalizeFully(subCategory.getName().replaceAll("_", " "));
 			ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " sub-category");
@@ -238,7 +238,7 @@ public class DataHolder {
 		StringBuilder counter = new StringBuilder();
 
 		for (Entry entry : subCategory.getEntryList()) {
-			if (entry.getPermissionNode() != null && !player.hasPermission(entry.getPermissionNode()))
+			if (!entry.hasPermission(player))
 				continue;
 			String normalizedName = WordUtils.capitalizeFully(entry.getName().replaceAll("_", " "));
 			workingList.put(entry, getFormattedPiece(normalizedName,

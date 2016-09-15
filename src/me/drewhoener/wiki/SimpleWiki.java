@@ -41,6 +41,8 @@ public class SimpleWiki extends JavaPlugin implements Listener {
 			this.saveDefaultConfig();
 		}
 
+		this.setConfig();
+
 		this.dataHolder = new DataHolder();
 		this.indexFiles();
 
@@ -62,7 +64,10 @@ public class SimpleWiki extends JavaPlugin implements Listener {
 							Bukkit.broadcastMessage(category.toString());
 				break;
 			case "reindex":
+				if (!sender.hasPermission(Util.Config.DEFAULT_PERMISSION))
+					return true;
 				sender.sendMessage(ChatColor.GREEN + "Reloading wiki files");
+				this.getLogger().info("Reloaded Wiki");
 				this.dataHolder.clearWikiList();
 				this.indexFiles();
 				break;
@@ -78,7 +83,8 @@ public class SimpleWiki extends JavaPlugin implements Listener {
 			if (files != null)
 				for (File file : files)
 					try {
-						this.getLogger().info("Debug: File name is " + file.getName());
+						if (Util.Config.DEBUG)
+							this.getLogger().info("Debug: File name is " + file.getName());
 						if (FilenameUtils.getExtension(file.getName()).endsWith("yml")) {
 							YamlConfiguration wiki = new YamlConfiguration();
 							wiki.load(file);
@@ -90,6 +96,11 @@ public class SimpleWiki extends JavaPlugin implements Listener {
 		} else {
 			this.getLogger().severe("No Category File Detected!");
 		}
+	}
+
+	private void setConfig() {
+		Util.Config.DEBUG = this.getConfig().getBoolean("debug", false);
+		Util.Config.DEFAULT_PERMISSION = this.getConfig().getString("permissionNode", "");
 	}
 
 	@EventHandler

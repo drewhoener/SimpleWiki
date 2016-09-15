@@ -3,6 +3,7 @@ package me.drewhoener.wiki.util;
 import me.drewhoener.wiki.SimpleWiki;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.Arrays;
@@ -47,6 +48,15 @@ public class Util {
 	public static String getEnd() {
 
 		return ChatColor.DARK_AQUA + "" + ChatColor.STRIKETHROUGH + "-----------------------------------------------------";
+	}
+
+	public static boolean simplePermissionCheck(Player player, String permissionNode) {
+		return permissionNode != null && player.hasPermission(permissionNode);
+	}
+
+	public static class Config {
+		public static boolean DEBUG = false;
+		public static String DEFAULT_PERMISSION = "";
 	}
 
 }

@@ -1,7 +1,9 @@
 package me.drewhoener.wiki.pages;
 
+import me.drewhoener.wiki.pages.generic.INameable;
 import me.drewhoener.wiki.util.Util;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +32,9 @@ public class PluginWiki implements INameable {
 		return categoryList;
 	}
 
-	public String getPermissionNode() {
-		return permissionNode;
+	public boolean hasPermission(Player player) {
+
+		return Util.simplePermissionCheck(player, this.permissionNode);
 	}
 
 	public String getSubHeader() {
