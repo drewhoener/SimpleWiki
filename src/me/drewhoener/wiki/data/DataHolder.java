@@ -2,9 +2,9 @@ package me.drewhoener.wiki.data;
 
 import me.drewhoener.wiki.pages.Category;
 import me.drewhoener.wiki.pages.Entry;
-import me.drewhoener.wiki.pages.generic.INameable;
 import me.drewhoener.wiki.pages.PluginWiki;
 import me.drewhoener.wiki.pages.SubCategory;
+import me.drewhoener.wiki.pages.generic.INameable;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -137,7 +137,7 @@ public class DataHolder {
 			ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " wiki");
 			workingList.put(wiki, getFormattedPiece(normalizedName,
 					new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()),
-					new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + wiki.getName().toLowerCase())));
+					new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + wiki.getName().toLowerCase()), '7'));
 		}
 		for (Map.Entry<PluginWiki, TextComponent> entry : workingList.entrySet()) {
 			String normalizedName = WordUtils.capitalizeFully(entry.getKey().getName().replaceAll("_", " "));
@@ -147,7 +147,7 @@ public class DataHolder {
 				counter.append(spacer);
 			} else {
 				finalComponents.add(workingComponent.toArray(new TextComponent[finalComponents.size()]));
-				workingComponent.clear();
+				workingComponent = new LinkedList<>();
 				workingComponent.add(entry.getValue());
 				workingComponent.add(new TextComponent(TextComponent.fromLegacyText(spacer)));
 				counter = new StringBuilder("").append("[").append(normalizedName).append("]").append(spacer);
@@ -173,7 +173,7 @@ public class DataHolder {
 			ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " category");
 			workingList.put(category, getFormattedPiece(normalizedName,
 					new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()),
-					new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + category.getParent().getName().toLowerCase() + " " + category.getName().toLowerCase())));
+					new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + category.getParent().getName().toLowerCase() + " " + category.getName().toLowerCase()), '7'));
 		}
 		for (Map.Entry<Category, TextComponent> entry : workingList.entrySet()) {
 			String normalizedName = WordUtils.capitalizeFully(entry.getKey().getName().replaceAll("_", " "));
@@ -183,7 +183,7 @@ public class DataHolder {
 				counter.append(spacer);
 			} else {
 				finalComponents.add(workingComponent.toArray(new TextComponent[finalComponents.size()]));
-				workingComponent.clear();
+				workingComponent = new LinkedList<>();
 				workingComponent.add(entry.getValue());
 				workingComponent.add(new TextComponent(TextComponent.fromLegacyText(spacer)));
 				counter = new StringBuilder("").append("[").append(normalizedName).append("]").append(spacer);
@@ -209,7 +209,7 @@ public class DataHolder {
 			ComponentBuilder textBuilder = new ComponentBuilder(ChatColor.GREEN + "Click me to go to the " + ChatColor.GOLD + normalizedName + ChatColor.GREEN + " sub-category");
 			workingList.put(subCategory, getFormattedPiece(normalizedName,
 					new HoverEvent(HoverEvent.Action.SHOW_TEXT, textBuilder.create()),
-					new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + category.getParent().getName().toLowerCase() + " " + category.getName().toLowerCase() + " " + subCategory.getName().toLowerCase())));
+					new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + category.getParent().getName().toLowerCase() + " " + category.getName().toLowerCase() + " " + subCategory.getName().toLowerCase()), '7'));
 		}
 		for (Map.Entry<SubCategory, TextComponent> entry : workingList.entrySet()) {
 			String normalizedName = WordUtils.capitalizeFully(entry.getKey().getName().replaceAll("_", " "));
@@ -219,7 +219,7 @@ public class DataHolder {
 				counter.append(spacer);
 			} else {
 				finalComponents.add(workingComponent.toArray(new TextComponent[finalComponents.size()]));
-				workingComponent.clear();
+				workingComponent = new LinkedList<>();
 				workingComponent.add(entry.getValue());
 				workingComponent.add(new TextComponent(TextComponent.fromLegacyText(spacer)));
 				counter = new StringBuilder("").append("[").append(normalizedName).append("]").append(spacer);
@@ -231,7 +231,7 @@ public class DataHolder {
 	}
 
 	public TextComponent[][] formatEntries(SubCategory subCategory, Player player) {
-		TreeMap<Entry, TextComponent> workingList = new TreeMap<>(nameableComparator);
+		Map<Entry, TextComponent> workingList = new TreeMap<>(nameableComparator);
 		LinkedList<TextComponent[]> finalComponents = new LinkedList<>();
 		LinkedList<TextComponent> workingComponent = new LinkedList<>();
 		String spacer = "   ";
@@ -243,8 +243,10 @@ public class DataHolder {
 			String normalizedName = WordUtils.capitalizeFully(entry.getName().replaceAll("_", " "));
 			workingList.put(entry, getFormattedPiece(normalizedName,
 					new HoverEvent(HoverEvent.Action.SHOW_TEXT, entry.getHover()),
-					new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + entry.getParent().getParent().getParent().getName().toLowerCase() + " " + entry.getParent().getParent().getName() + " " + entry.getParent().getName() + " " + entry.getName())));
+					new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + entry.getParent().getParent().getParent().getName().toLowerCase() + " " + entry.getParent().getParent().getName() + " " + entry.getParent().getName() + " " + entry.getName()),
+					entry.getColor()));
 		}
+
 		for (Map.Entry<Entry, TextComponent> entry : workingList.entrySet()) {
 			String normalizedName = WordUtils.capitalizeFully(entry.getKey().getName().replaceAll("_", " "));
 			if (counter.append("[").append(normalizedName).append("]").length() <= 60) {
@@ -253,7 +255,7 @@ public class DataHolder {
 				counter.append(spacer);
 			} else {
 				finalComponents.add(workingComponent.toArray(new TextComponent[finalComponents.size()]));
-				workingComponent.clear();
+				workingComponent = new LinkedList<>();
 				workingComponent.add(entry.getValue());
 				workingComponent.add(new TextComponent(TextComponent.fromLegacyText(spacer)));
 				counter = new StringBuilder("").append("[").append(normalizedName).append("]").append(spacer);
@@ -264,12 +266,12 @@ public class DataHolder {
 		return finalComponents.toArray(new TextComponent[finalComponents.size()][]);
 	}
 
-	private TextComponent getFormattedPiece(String normalizedName, HoverEvent hoverEvent, ClickEvent clickEvent) {
+	public static TextComponent getFormattedPiece(String normalizedName, HoverEvent hoverEvent, ClickEvent clickEvent, char colorCode) {
 		ComponentBuilder builder = new ComponentBuilder("");
 		builder.event(hoverEvent)
 				.event(clickEvent)
 				.append("[").color(ChatColor.DARK_GREEN)
-				.append(normalizedName).color(ChatColor.GRAY)
+				.append(normalizedName).color(ChatColor.getByChar(colorCode))
 				.append("]").color(ChatColor.DARK_GREEN);
 		return new TextComponent(builder.create());
 	}

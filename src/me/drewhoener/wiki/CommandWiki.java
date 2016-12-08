@@ -1,6 +1,7 @@
 package me.drewhoener.wiki;
 
 import com.google.common.collect.ImmutableList;
+import me.drewhoener.wiki.data.DataHolder;
 import me.drewhoener.wiki.pages.Category;
 import me.drewhoener.wiki.pages.Entry;
 import me.drewhoener.wiki.pages.PluginWiki;
@@ -8,8 +9,12 @@ import me.drewhoener.wiki.pages.SubCategory;
 import me.drewhoener.wiki.util.Util;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang3.text.WordUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -19,6 +24,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.bukkit.ChatColor.RED;
@@ -121,12 +127,16 @@ class CommandWiki implements TabExecutor {
 					player.sendMessage(ChatColor.RED + "You don't have permission to view this SubCategory!");
 					return;
 				}
-				player.sendMessage(Util.getHeader(WordUtils.capitalizeFully(subCategory.getName().replaceAll("_", " "))));
-				if (subCategory.getSubHeader() != null)
-					player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "" + subCategory.getSubHeader());
-				for (TextComponent[] component : this.simpleWiki.dataHolder.formatEntries(subCategory, player))
-					player.spigot().sendMessage((BaseComponent[]) component);
-				player.sendMessage(Util.getEnd());
+				try {
+					player.sendMessage(Util.getHeader(WordUtils.capitalizeFully(subCategory.getName().replaceAll("_", " "))));
+					if (subCategory.getSubHeader() != null)
+						player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "" + subCategory.getSubHeader());
+					for (TextComponent[] component : this.simpleWiki.dataHolder.formatEntries(subCategory, player))
+						player.spigot().sendMessage((BaseComponent[]) component);
+					player.sendMessage(Util.getEnd());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				break;
 			case 4:
 				wiki = this.simpleWiki.dataHolder.getWikiByName(args[0]);
@@ -160,16 +170,71 @@ class CommandWiki implements TabExecutor {
 					player.openInventory(inv);
 					player.updateInventory();
 				}
-				player.sendMessage(Util.getHeader(WordUtils.capitalizeFully(entry.getName().replaceAll("_", " "))));
+
+				if (player.hasPermission(Util.Config.DEFAULT_PERMISSION)) {
+					HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to share this Entry in chat!").color(ChatColor.GOLD).create());
+					ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + entry.getParent().getParent().getParent().getName() + " " + entry.getParent().getParent().getName() + " " + entry.getParent().getName() + " " + entry.getName() + " broadcast");
+					player.spigot().sendMessage((BaseComponent[]) Util.getHeader(WordUtils.capitalizeFully(entry.getName().replaceAll("_", " ")), event, clickEvent, ChatColor.getByChar(entry.getColor())));
+				} else {
+					player.sendMessage(Util.getHeader(WordUtils.capitalizeFully(entry.getName().replaceAll("_", " "))));
+				}
 				for (String line : entry.getDescriptionList()) {
 					player.sendMessage(ChatColor.translateAlternateColorCodes('&', line));
 				}
 				player.sendMessage(Util.getEnd());
 				break;
+			case 5:
+				wiki = this.simpleWiki.dataHolder.getWikiByName(args[0]);
+				if (wiki == null) {
+					player.sendMessage(RED + "Couldn't find the wiki requested!");
+					return;
+				}
+				category = this.simpleWiki.dataHolder.getCategory(wiki, args[1]);
+				if (category == null) {
+					player.sendMessage(RED + "Couldn't find the category requested!");
+					return;
+				}
+				subCategory = this.simpleWiki.dataHolder.getSubCategory(category, args[2]);
+				if (subCategory == null) {
+					player.sendMessage(RED + "Couldn't find the sub-category requested!");
+					return;
+				}
+				entry = this.simpleWiki.dataHolder.getEntry(subCategory, args[3]);
+				if (entry == null) {
+					player.sendMessage(RED + "Couldn't find the entry requested!");
+					return;
+				}
+				if (!entry.hasPermission(player)) {
+					player.sendMessage(ChatColor.RED + "You don't have permission to view this Entry!");
+					return;
+				}
+				if (!args[4].equalsIgnoreCase("broadcast")) {
+					player.sendMessage(ChatColor.RED + "Invalid Wiki Format!");
+					return;
+				}
+
+				for (Player par1Player : Bukkit.getOnlinePlayers()) {
+					if (entry.hasPermission(par1Player)) {
+						par1Player.spigot().sendMessage(shareEntry(entry, player));
+					}
+				}
+				break;
 			default:
 				break;
 		}
 
+	}
+
+	public BaseComponent[] shareEntry(Entry entry, Player playerSharing) {
+		LinkedList<TextComponent> components = new LinkedList<>();
+		String normalizedName = WordUtils.capitalizeFully(entry.getName().replaceAll("_", " "));
+
+		components.add(new TextComponent(new ComponentBuilder(playerSharing.getName()).color(ChatColor.BLUE).append(" has shared a Wiki Entry: ").color(ChatColor.GOLD).create()));
+		components.add(DataHolder.getFormattedPiece(normalizedName,
+				new HoverEvent(HoverEvent.Action.SHOW_TEXT, entry.getHover()),
+				new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/swiki " + entry.getParent().getParent().getParent().getName().toLowerCase() + " " + entry.getParent().getParent().getName() + " " + entry.getParent().getName() + " " + entry.getName()),
+				entry.getColor()));
+		return components.toArray(new TextComponent[components.size()]);
 	}
 
 	@Override

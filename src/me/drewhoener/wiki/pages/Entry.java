@@ -20,7 +20,7 @@ import java.util.List;
 public class Entry implements INameable {
 	private SubCategory parent;
 	private String name;
-	private String color;
+	private char color;
 	private String permissionNode;
 	private List<String> descriptionList = new LinkedList<>();
 	private List<ItemStack> recipeList = new LinkedList<>();
@@ -30,7 +30,11 @@ public class Entry implements INameable {
 		this.parent = parent;
 		this.name = name;
 		this.permissionNode = permissionNode;
-		this.color = color;
+		try {
+			this.color = color.contains("&") ? color.charAt(color.indexOf('&') + 1) : '7';
+		} catch (Exception e) {
+			this.color = '7';
+		}
 		this.descriptionList = descriptionList;
 		this.itemStack = itemStack;
 	}
@@ -42,7 +46,16 @@ public class Entry implements INameable {
 			for (String s : configurationSection.getStringList("recipe")) {
 				if (Util.Config.DEBUG)
 					Bukkit.getLogger().severe("ItemStack: " + s);
-				this.recipeList.add(new ItemStack(Material.matchMaterial(s)));
+				String[] parts = s.split(":");
+				if (parts.length > 1) {
+					if (Util.isInteger(parts[1])) {
+						this.recipeList.add(new ItemStack(Material.matchMaterial(parts[0]), 1, (byte) Integer.parseInt(parts[1])));
+					} else {
+						this.recipeList.add(new ItemStack(Material.matchMaterial(s)));
+					}
+				} else {
+					this.recipeList.add(new ItemStack(Material.matchMaterial(s)));
+				}
 			}
 
 		}
@@ -54,6 +67,10 @@ public class Entry implements INameable {
 
 	public List<ItemStack> getRecipeList() {
 		return recipeList;
+	}
+
+	public char getColor() {
+		return this.color;
 	}
 
 	public SubCategory getParent() {
