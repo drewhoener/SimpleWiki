@@ -7,4 +7,4 @@ Infinitely configurable based on simple yaml formatting
 
 Uses no more than a command system at its core
 
-Dynamically built and indexed
+Dynamically built and indexed.
