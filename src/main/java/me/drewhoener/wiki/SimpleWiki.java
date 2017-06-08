@@ -21,8 +21,8 @@ import java.util.regex.Pattern;
 
 public class SimpleWiki extends JavaPlugin implements Listener {
 
-	DataHolder dataHolder;
 	public static final File dataFolder = new File("plugins", "SimpleWiki");
+	DataHolder dataHolder;
 
 	public void onEnable() {
 

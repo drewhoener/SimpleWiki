@@ -1,0 +1,90 @@
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'maven'
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
+
+group = project.property('group')
+version = project.property('version')
+
+def bukkitVersion = project.property('apiversion')
+def user = hasProperty('mavenUser') ? mavenUser : System.getenv('mavenUser')
+def pass = hasProperty('mavenPassword') ? mavenPassword : System.getenv('mavenPassword')
+
+
+repositories {
+    jcenter()
+
+    maven {
+        name 'spigot-repo'
+        url 'http://repo.drewhoener.com/repository/spigot-repo/'
+        credentials {
+            username "$user"
+            password "$pass"
+        }
+    }
+    maven {
+        name 'drew-hosted'
+        url 'http://repo.drewhoener.com/repository/plugins-hosted/' // Spigot repo
+        credentials {
+            username "$user"
+            password "$pass"
+        }
+    }
+
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/' // Sonatype snapshots
+    }
+}
+
+dependencies {
+    //compile (group: 'org.bukkit', name: 'bukkit', version: bukkitVersion)
+    compile (group: 'org.spigotmc', name: 'spigot-api', version: bukkitVersion)
+    compile (group: 'org.bukkit', name: 'craftbukkit', version: bukkitVersion)
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'plugin.yml'
+        // replace version and mcversion
+        expand 'version': project.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'plugin.yml'
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    //noinspection GroovyAssignabilityCheck
+    archives sourcesJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+
+            pom.project {
+                pom.version = project.version
+                pom.artifactId = project.name
+                pom.groupId = project.group
+            }
+
+            repository(url: "http://repo.drewhoener.com/repository/plugin-releases/") {
+                authentication(userName: "$user", password: "$pass")
+            }
+            snapshotRepository(url: "http://repo.drewhoener.com/repository/plugin-snapshots/") {
+                authentication(userName: "$user", password: "$pass")
+            }
+        }
+    }
+}

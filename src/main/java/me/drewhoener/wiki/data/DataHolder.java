@@ -26,8 +26,24 @@ import java.util.UUID;
 @SuppressWarnings("Duplicates")
 public class DataHolder {
 
-	private List<PluginWiki> wikiList = new ArrayList<>();
 	public List<UUID> noInteract = new ArrayList<>();
+	private List<PluginWiki> wikiList = new ArrayList<>();
+	private Comparator<INameable> nameableComparator = new Comparator<INameable>() {
+		@Override
+		public int compare(INameable o1, INameable o2) {
+			return o1.getName().compareToIgnoreCase(o2.getName());
+		}
+	};
+
+	public static TextComponent getFormattedPiece(String normalizedName, HoverEvent hoverEvent, ClickEvent clickEvent, char colorCode) {
+		ComponentBuilder builder = new ComponentBuilder("");
+		builder.event(hoverEvent)
+				.event(clickEvent)
+				.append("[").color(ChatColor.DARK_GREEN)
+				.append(normalizedName).color(ChatColor.getByChar(colorCode))
+				.append("]").color(ChatColor.DARK_GREEN);
+		return new TextComponent(builder.create());
+	}
 
 	public void addWiki(PluginWiki wiki) {
 		this.wikiList.add(wiki);
@@ -40,13 +56,6 @@ public class DataHolder {
 	public void clearWikiList() {
 		this.wikiList.clear();
 	}
-
-	private Comparator<INameable> nameableComparator = new Comparator<INameable>() {
-		@Override
-		public int compare(INameable o1, INameable o2) {
-			return o1.getName().compareToIgnoreCase(o2.getName());
-		}
-	};
 
 	public PluginWiki getWikiByName(String arg) {
 		for (PluginWiki wiki : this.wikiList)
@@ -264,16 +273,6 @@ public class DataHolder {
 		finalComponents.add(workingComponent.toArray(new TextComponent[finalComponents.size()]));
 
 		return finalComponents.toArray(new TextComponent[finalComponents.size()][]);
-	}
-
-	public static TextComponent getFormattedPiece(String normalizedName, HoverEvent hoverEvent, ClickEvent clickEvent, char colorCode) {
-		ComponentBuilder builder = new ComponentBuilder("");
-		builder.event(hoverEvent)
-				.event(clickEvent)
-				.append("[").color(ChatColor.DARK_GREEN)
-				.append(normalizedName).color(ChatColor.getByChar(colorCode))
-				.append("]").color(ChatColor.DARK_GREEN);
-		return new TextComponent(builder.create());
 	}
 
 }

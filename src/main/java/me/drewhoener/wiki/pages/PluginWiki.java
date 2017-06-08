@@ -10,8 +10,8 @@ import java.util.List;
 
 public class PluginWiki implements INameable {
 
-	private String name;
 	String permissionNode;
+	private String name;
 	private String subHeader;
 	private List<Category> categoryList = new ArrayList<>();
 
