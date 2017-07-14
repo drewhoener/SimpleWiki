@@ -18,24 +18,12 @@ repositories {
     jcenter()
 
     maven {
-        name 'spigot-repo'
-        url 'http://repo.drewhoener.com/repository/spigot-repo/'
+        name 'drew-repo'
+        url 'http://repo.drewhoener.com/repository/public/'
         credentials {
             username "$user"
             password "$pass"
         }
-    }
-    maven {
-        name 'drew-hosted'
-        url 'http://repo.drewhoener.com/repository/plugins-hosted/' // Spigot repo
-        credentials {
-            username "$user"
-            password "$pass"
-        }
-    }
-
-    maven {
-        url 'https://oss.sonatype.org/content/repositories/snapshots/' // Sonatype snapshots
     }
 }
 
