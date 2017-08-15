@@ -5,6 +5,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -18,6 +19,8 @@ public class Util {
 
 	public static final File WIKI_DIR;
 	public static final List<String> reservedWords = Arrays.asList("permissionNode", "subHeader");
+	public static final TextComponent NEW_LINE = new TextComponent(ComponentSerializer.parse("{text:\"\n\"}"));
+
 
 	static {
 

@@ -1,7 +1,10 @@
 package me.drewhoener.wiki;
 
+import me.drewhoener.wiki.book.BookEntry;
+import me.drewhoener.wiki.book.BookSection;
 import me.drewhoener.wiki.data.DataHolder;
 import me.drewhoener.wiki.pages.PluginWiki;
+import me.drewhoener.wiki.pages.generic.BookFormatted;
 import me.drewhoener.wiki.util.Util;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.io.FilenameUtils;
@@ -9,11 +12,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -22,6 +28,13 @@ import java.util.regex.Pattern;
 public class SimpleWiki extends JavaPlugin implements Listener {
 
 	public static final File dataFolder = new File("plugins", "SimpleWiki");
+
+	static {
+		ConfigurationSerialization.registerClass(BookFormatted.class);
+		ConfigurationSerialization.registerClass(BookSection.class);
+		ConfigurationSerialization.registerClass(BookEntry.class);
+	}
+
 	DataHolder dataHolder;
 
 	public void onEnable() {
@@ -104,9 +117,19 @@ public class SimpleWiki extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler
-	public void onInteract(InventoryClickEvent event) {
-		if (this.dataHolder.noInteract.contains(event.getWhoClicked().getUniqueId()))
+	public void onInvClick(InventoryClickEvent event) {
+		if (this.dataHolder.noInteract.contains(event.getWhoClicked().getUniqueId())) {
 			event.setCancelled(true);
+			event.setResult(Event.Result.DENY);
+		}
+	}
+
+	@EventHandler
+	public void onInvInteract(InventoryInteractEvent event) {
+		if (this.dataHolder.noInteract.contains(event.getWhoClicked().getUniqueId())) {
+			event.setCancelled(true);
+			event.setResult(Event.Result.DENY);
+		}
 	}
 
 	@EventHandler

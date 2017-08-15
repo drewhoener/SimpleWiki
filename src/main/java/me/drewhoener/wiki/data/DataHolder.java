@@ -27,13 +27,8 @@ import java.util.UUID;
 public class DataHolder {
 
 	public List<UUID> noInteract = new ArrayList<>();
+	public Comparator<INameable> nameableComparator = (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName());
 	private List<PluginWiki> wikiList = new ArrayList<>();
-	private Comparator<INameable> nameableComparator = new Comparator<INameable>() {
-		@Override
-		public int compare(INameable o1, INameable o2) {
-			return o1.getName().compareToIgnoreCase(o2.getName());
-		}
-	};
 
 	public static TextComponent getFormattedPiece(String normalizedName, HoverEvent hoverEvent, ClickEvent clickEvent, char colorCode) {
 		ComponentBuilder builder = new ComponentBuilder("");
