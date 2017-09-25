@@ -19,15 +19,15 @@ public class BookSection extends BookFormatted {
 
 	private LinkedList<BookSection> sections = new LinkedList<>();
 	private LinkedList<BookEntry> entries = new LinkedList<>();
-
 	private LinkedList<TextComponent> lines = new LinkedList<>();
+	private String permissionNode;
 
 	public BookSection(String name, String description) {
 		super(name, description);
 	}
 
-	private BookSection(String name, String description, int sectionID, int parentSection, LinkedList<BookSection> sections, LinkedList<BookEntry> entries, LinkedList<TextComponent> lines) {
-		super(name, description, sectionID, parentSection);
+	private BookSection(String permission, String name, String description, int sectionID, int parentSection, LinkedList<BookSection> sections, LinkedList<BookEntry> entries, LinkedList<TextComponent> lines) {
+		super(permission, name, description, sectionID, parentSection);
 		this.sections = sections;
 		this.entries = entries;
 		this.lines = lines;
@@ -35,6 +35,7 @@ public class BookSection extends BookFormatted {
 
 	@SuppressWarnings("unchecked")
 	public static BookSection deserialize(Map<String, Object> map) {
+		String permission = map.getOrDefault("permission", "").toString();
 		String name = map.getOrDefault("name", DEFAULT_NAME).toString();
 		String description = map.getOrDefault("description", DEFAULT_DESCRIPTION).toString();
 		int sectionID = ((int) map.getOrDefault("sectionID", -1));
@@ -46,7 +47,7 @@ public class BookSection extends BookFormatted {
 				.map(str -> new TextComponent(ComponentSerializer.parse(str)))
 				.collect(Collectors.toCollection(LinkedList::new));
 
-		return new BookSection(name, description, sectionID, parentSection, sections, entries, lines);
+		return new BookSection(permission, name, description, sectionID, parentSection, sections, entries, lines);
 	}
 
 	@Override
@@ -80,7 +81,6 @@ public class BookSection extends BookFormatted {
 		components.add(Util.NEW_LINE);
 		components.add(new TextComponent(new ComponentBuilder("Sections: ").color(ChatColor.GOLD).append("" + this.sections.size()).color(ChatColor.GREEN).create()));
 		components.add(new TextComponent(new ComponentBuilder("Entries: ").color(ChatColor.GOLD).append("" + this.entries.size()).color(ChatColor.GREEN).create()));
-
 
 		this.hoverComponent = components.toArray(new BaseComponent[components.size()]);
 	}
@@ -137,6 +137,7 @@ public class BookSection extends BookFormatted {
 	@Override
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = super.serialize();
+		map.put("permission", this.permissionNode);
 		map.put("sections", this.sections);
 		map.put("entries", this.entries);
 		map.put("lines", this.lines.stream().map(ComponentSerializer::toString).collect(Collectors.toList()));

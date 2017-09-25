@@ -22,6 +22,7 @@ public abstract class BookFormatted implements IBookGUI, ConfigurationSerializab
 	public static int NEXT_ID = 0;
 	protected static String DEFAULT_NAME = "MissingNo";
 	protected static String DEFAULT_DESCRIPTION = "No Description Provided!";
+	private String permission;
 	protected BaseComponent[] hoverComponent = new BaseComponent[0];
 	private String name;
 	private String description;
@@ -29,15 +30,20 @@ public abstract class BookFormatted implements IBookGUI, ConfigurationSerializab
 	private int parentSection;
 	private LinkedList<IChatBaseComponent> pages = new LinkedList<>();
 
+	public BookFormatted(String permission, String name, String description){
+		this(permission, name, description, NEXT_ID++, -1);
+	}
+
 	public BookFormatted(String name, String description) {
-		this(name, description, NEXT_ID++, -1);
+		this("", name, description, NEXT_ID++, -1);
 	}
 
 	public BookFormatted(String name, String description, int parent) {
-		this(name, description, NEXT_ID++, parent);
+		this("", name, description, NEXT_ID++, parent);
 	}
 
-	public BookFormatted(String name, String description, int sectionID, int parentSection) {
+	public BookFormatted(String permission, String name, String description, int sectionID, int parentSection) {
+		this.permission = permission;
 		this.name = name;
 		this.description = description;
 		this.sectionID = sectionID;
